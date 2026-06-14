@@ -26,12 +26,6 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
   // Gallery management state
   const [activeTab, setActiveTab] = useState('bookings'); // 'bookings' or 'gallery'
   const [galleryPhotos, setGalleryPhotos] = useState([]);
-
-  // Inquiries state
-  const [inquiries, setInquiries] = useState([]);
-  const [inquiriesLoading, setInquiriesLoading] = useState(false);
-  const [inquiriesSearch, setInquiriesSearch] = useState('');
-  const [inquiriesSubjectFilter, setInquiriesSubjectFilter] = useState('All');
   const [newPhotoTitle, setNewPhotoTitle] = useState('');
   const [newPhotoCategory, setNewPhotoCategory] = useState('Clinic');
   const [isUploading, setIsUploading] = useState(false);
@@ -88,12 +82,40 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
     return () => clearInterval(interval);
   }, [isAuthenticated, activeTab]);
 
+  // Automatic logout on unmount/navigating away & Inactivity timeout (10 min)
   useEffect(() => {
-    const sessionAuth = sessionStorage.getItem('admin_auth');
-    if (sessionAuth === 'true') {
-      setIsAuthenticated(true);
-    }
+    // Clear auth session when leaving the page (component unmounting)
+    return () => {
+      sessionStorage.removeItem('admin_auth');
+    };
   }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const INACTIVITY_TIMEOUT = 10 * 60 * 1000; // 10 minutes session expiry
+    let timeoutId;
+
+    const resetTimer = () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        setIsAuthenticated(false);
+        sessionStorage.removeItem('admin_auth');
+        alert('Session expired due to inactivity. Please log in again.');
+      }, INACTIVITY_TIMEOUT);
+    };
+
+    // User activity listeners
+    const activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    activityEvents.forEach(evt => window.addEventListener(evt, resetTimer));
+
+    resetTimer();
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      activityEvents.forEach(evt => window.removeEventListener(evt, resetTimer));
+    };
+  }, [isAuthenticated]);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -151,47 +173,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
     }
   };
 
-  // Inquiries methods
-  const fetchInquiries = async () => {
-    setInquiriesLoading(true);
-    try {
-      const response = await fetch(`${API_BASE}/api/inquiries`);
-      if (response.ok) {
-        const data = await response.json();
-        setInquiries(data);
-      } else {
-        console.error('Failed to fetch inquiries');
-      }
-    } catch (e) {
-      console.error('Error fetching inquiries:', e);
-    } finally {
-      setInquiriesLoading(false);
-    }
-  };
-
-  const deleteInquiry = async (id) => {
-    if (window.confirm("Are you sure you want to delete this message record?")) {
-      try {
-        const response = await fetch(`${API_BASE}/api/inquiries/${id}`, {
-          method: 'DELETE'
-        });
-        if (response.ok) {
-          setInquiries(prev => prev.filter(item => item.id !== id));
-        } else {
-          alert('Failed to delete inquiry from database');
-        }
-      } catch (e) {
-        console.error('Error deleting inquiry:', e);
-        alert('Error connecting to backend server');
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetchInquiries();
-    }
-  }, [isAuthenticated]);
+  // Inquiries functionality removed from Admin Panel as requested
 
   // Gallery Photos useEffect & Handlers
   useEffect(() => {
@@ -486,26 +468,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
         >
           Appointments
         </button>
-        <button
-          onClick={() => {
-            setActiveTab('inquiries');
-            fetchInquiries();
-          }}
-          style={{
-            border: 'none',
-            background: 'none',
-            fontSize: '1rem',
-            fontWeight: '700',
-            color: activeTab === 'inquiries' ? 'var(--primary)' : 'var(--text-muted)',
-            padding: '12px 16px',
-            borderBottom: activeTab === 'inquiries' ? '3px solid var(--primary)' : '3px solid transparent',
-            cursor: 'pointer',
-            fontFamily: 'var(--font-heading)',
-            transition: 'var(--transition-fast)'
-          }}
-        >
-          Contact Inquiries
-        </button>
+
         <button
           onClick={() => setActiveTab('gallery')}
           style={{
@@ -820,125 +783,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
         </>
       )}
 
-      {activeTab === 'inquiries' && (
-        <>
-          {/* Inquiries Filters */}
-          <div style={styles.filtersBox}>
-            <input
-              type="text"
-              placeholder="Search by name, email, message..."
-              value={inquiriesSearch}
-              onChange={(e) => setInquiriesSearch(e.target.value)}
-              style={styles.filterInput}
-            />
 
-            <select
-              value={inquiriesSubjectFilter}
-              onChange={(e) => setInquiriesSubjectFilter(e.target.value)}
-              style={styles.filterSelect}
-            >
-              <option value="All">All Subjects</option>
-              <option value="General Inquiry">General Inquiry</option>
-              <option value="Billing Question">Billing & Insurance</option>
-              <option value="Feedback">Feedback</option>
-              <option value="Support">Other Support</option>
-            </select>
-
-            <button
-              onClick={fetchInquiries}
-              className="btn-secondary"
-              style={{ padding: '10px 16px', gap: '6px', fontSize: '0.9rem', cursor: 'pointer' }}
-            >
-              Refresh
-            </button>
-
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              Found: <strong>{filteredInquiries.length}</strong> inquiries
-            </span>
-          </div>
-
-          {inquiriesLoading ? (
-            <div style={{ textAlign: 'center', padding: '60px' }}>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                margin: '0 auto 16px',
-                background: 'conic-gradient(from 0deg, var(--primary) 30%, var(--secondary) 100%)',
-                mask: 'radial-gradient(farthest-side, transparent 65%, black 66%)',
-                WebkitMask: 'radial-gradient(farthest-side, transparent 65%, black 66%)',
-                animation: 'spin 1s linear infinite'
-              }}></div>
-              <p style={{ color: 'var(--text-muted)' }}>Loading messages...</p>
-            </div>
-          ) : filteredInquiries.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '60px', backgroundColor: '#fff', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-light)' }}>
-              <MessageSquare size={48} color="var(--text-muted)" style={{ marginBottom: '16px' }} />
-              <h3 style={{ fontSize: '1.25rem', color: 'var(--bg-dark)' }}>No Messages Found</h3>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '4px' }}>There are no inquiries matching your filters, or database is empty.</p>
-            </div>
-          ) : (
-            <div style={{ overflowX: 'auto' }}>
-              <table style={styles.table}>
-                <thead>
-                  <tr>
-                    <th style={styles.th}>Name</th>
-                    <th style={styles.th}>Contact Info</th>
-                    <th style={styles.th}>Subject</th>
-                    <th style={styles.th}>Message Details</th>
-                    <th style={styles.th}>Date Received</th>
-                    <th style={styles.th}>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredInquiries.map((inquiry) => (
-                    <tr key={inquiry.id}>
-                      <td style={styles.td}>
-                        <strong>{inquiry.firstName} {inquiry.lastName}</strong>
-                      </td>
-                      <td style={styles.td}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Phone size={12} /> {inquiry.phone || 'N/A'}</div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}><Mail size={12} /> {inquiry.email}</div>
-                      </td>
-                      <td style={styles.td}>
-                        <span style={{ backgroundColor: 'var(--bg-main)', padding: '4px 8px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: '600' }}>
-                          {inquiry.subject}
-                        </span>
-                      </td>
-                      <td style={styles.td}>
-                        <div style={{
-                          maxWidth: '350px',
-                          whiteSpace: 'pre-wrap',
-                          wordBreak: 'break-word',
-                          fontSize: '0.85rem',
-                          lineHeight: '1.4'
-                        }}>
-                          {inquiry.message}
-                        </div>
-                      </td>
-                      <td style={styles.td}>
-                        <div>{new Date(inquiry.createdAt).toLocaleDateString()}</div>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                          {new Date(inquiry.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </div>
-                      </td>
-                      <td style={styles.td}>
-                        <button
-                          onClick={() => deleteInquiry(inquiry.id)}
-                          style={styles.actionBtn('#ef4444')}
-                          title="Delete Message"
-                        >
-                          <Trash2 size={14} /> Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </>
-      )}
 
       {activeTab === 'whatsapp' && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px', alignItems: 'start' }}>

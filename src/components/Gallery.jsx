@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { 
   ArrowLeft, ArrowRight, X, Image as ImageIcon, Heart, Play, Pause, 
-  ZoomIn, ZoomOut, RotateCcw, UploadCloud, Trash2, ShieldCheck, 
-  Eye, Award, Activity, Users, Plus, Loader2
+  ZoomIn, ZoomOut, RotateCcw, ShieldCheck, 
+  Eye, Award, Activity, Users
 } from 'lucide-react';
 
 // Local WebP Assets
@@ -78,19 +78,9 @@ export default function Gallery() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   
-  // Custom uploader states
-  const [isUploadPanelOpen, setIsUploadPanelOpen] = useState(false);
-  const [uploadFile, setUploadFile] = useState(null);
-  const [uploadPreview, setUploadPreview] = useState('');
-  const [newPhotoTitle, setNewPhotoTitle] = useState('');
-  const [newPhotoCategory, setNewPhotoCategory] = useState('Clinic Environment');
-  const [newPhotoDesc, setNewPhotoDesc] = useState('');
-  const [isUploading, setIsUploading] = useState(false);
-
   // Refs for tracking layout elements
   const heroRef = useRef(null);
   const lightboxImgRef = useRef(null);
-  const fileInputRef = useRef(null);
   const slideshowTimerRef = useRef(null);
   const progressTimerRef = useRef(null);
   const [slideshowProgress, setSlideshowProgress] = useState(0);
@@ -368,76 +358,7 @@ export default function Gallery() {
     setIsDragging(false);
   };
 
-  // Custom File Uploader logic
-  const handleFileDrop = (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    processSelectedFile(file);
-  };
-
-  const handleFileSelect = (e) => {
-    const file = e.target.files[0];
-    processSelectedFile(file);
-  };
-
-  const processSelectedFile = (file) => {
-    if (!file) return;
-    if (!file.type.startsWith('image/')) {
-      alert('Please upload a valid image file.');
-      return;
-    }
-    
-    setUploadFile(file);
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setUploadPreview(reader.result);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleUploadSubmit = (e) => {
-    e.preventDefault();
-    if (!uploadPreview) return;
-
-    setIsUploading(true);
-    
-    setTimeout(() => {
-      const newPhoto = {
-        id: `custom_${Date.now()}`,
-        title: newPhotoTitle.trim() || `Uploaded Gallery Image`,
-        category: newPhotoCategory,
-        url: uploadPreview,
-        description: newPhotoDesc.trim() || `Physiotherapy equipment and treatment services at The Therapy Universe.`,
-        baseLikes: 0
-      };
-
-      const updatedCustom = [newPhoto, ...customPhotos];
-      setCustomPhotos(updatedCustom);
-      localStorage.setItem('clinic_gallery_photos', JSON.stringify(updatedCustom));
-
-      // Reset Form State
-      setUploadFile(null);
-      setUploadPreview('');
-      setNewPhotoTitle('');
-      setNewPhotoDesc('');
-      setIsUploading(false);
-      setIsUploadPanelOpen(false);
-    }, 800); // Simulate network latency/spinner
-  };
-
-  const handleDeleteCustomPhoto = (e, photoId) => {
-    e.stopPropagation();
-    if (window.confirm("Are you sure you want to delete this custom photo from the gallery?")) {
-      const updated = customPhotos.filter(p => p.id !== photoId);
-      setCustomPhotos(updated);
-      localStorage.setItem('clinic_gallery_photos', JSON.stringify(updated));
-      
-      // Remove from liked if existed
-      const updatedLikes = likedPhotos.filter(id => id !== photoId);
-      setLikedPhotos(updatedLikes);
-      localStorage.setItem('clinic_gallery_likes', JSON.stringify(updatedLikes));
-    }
-  };
+  // No custom uploader/delete methods (managed on Admin Panel)
 
   return (
     <div className="gallery-page fade-in">
@@ -522,7 +443,6 @@ export default function Gallery() {
           <div className="gallery-cards-grid" key={activeFilter}>
             {filteredPhotos.map((photo, idx) => {
               const isLiked = likedPhotos.includes(photo.id);
-              const isCustom = photo.id.toString().startsWith('custom_');
               return (
                 <div
                   key={photo.id}
@@ -538,17 +458,6 @@ export default function Gallery() {
                       alt={photo.title}
                       className="card-media-img"
                     />
-
-                    {/* Trash button for custom uploads */}
-                    {isCustom && (
-                      <button 
-                        className="card-delete-btn"
-                        onClick={(e) => handleDeleteCustomPhoto(e, photo.id)}
-                        title="Delete from gallery"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    )}
 
                     {/* Interactive Overlay */}
                     <div className="card-action-overlay">
