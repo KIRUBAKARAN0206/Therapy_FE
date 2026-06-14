@@ -2,7 +2,7 @@ import React from 'react';
 import { Phone } from 'lucide-react';
 
 export default function CallCTA() {
-  const phoneNumber = "+917812864905"; // Clinic phone number
+  const phoneNumber = "+918220952580"; // Clinic phone number
 
   const styles = {
     floatingBtn: {

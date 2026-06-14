@@ -394,7 +394,7 @@ export default function Services() {
                   <Calendar size={16} /> Book Appointment
                 </a>
                 <a 
-                  href="tel:+917812864905" 
+                  href="tel:+918220952580" 
                   className="btn-secondary"
                   style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                 >

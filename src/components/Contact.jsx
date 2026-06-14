@@ -50,8 +50,8 @@ export default function Contact() {
     {
       icon: <Phone size={24} />,
       title: "Contact",
-      info: "78128 64905",
-      link: "tel:+917812864905"
+      info: "82209 52580",
+      link: "tel:+918220952580"
     },
     {
       icon: <Mail size={24} />,
@@ -114,7 +114,7 @@ export default function Contact() {
         `*Message:* ${formData.message}`;
 
       const encodedText = encodeURIComponent(whatsappMessage);
-      const whatsappUrl = `https://api.whatsapp.com/send?phone=917812864905&text=${encodedText}`;
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=918220952580&text=${encodedText}`;
       
       // Redirect to WhatsApp in a new tab
       window.open(whatsappUrl, '_blank');

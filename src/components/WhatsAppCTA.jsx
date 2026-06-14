@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function WhatsAppCTA() {
-  const phoneNumber = "917812864905"; // Clinic phone number
+  const phoneNumber = "918220952580"; // Clinic phone number
   const message = encodeURIComponent("Hello! I would like to inquire about booking a physical therapy session.");
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
 

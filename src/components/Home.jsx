@@ -362,7 +362,7 @@ export default function Home({ onNavigate }) {
                   Book Appointment <ArrowRight size={18} />
                 </button>
                 <a 
-                  href="tel:+917812864905" 
+                  href="tel:+918220952580" 
                   className="btn-secondary"
                   style={{ 
                     color: '#fff', 

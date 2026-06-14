@@ -995,7 +995,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
               <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '16px' }}>
                 <h4 style={{ fontSize: '0.9rem', fontWeight: '700', color: 'var(--bg-dark)', marginBottom: '8px' }}>Active Configurations:</h4>
                 <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                  Target Phone Number: <strong>+{import.meta.env.VITE_WHATSAPP_PHONE || '917812864905'}</strong>
+                  Target Phone Number: <strong>+{import.meta.env.VITE_WHATSAPP_PHONE || '918220952580'}</strong>
                 </p>
                 <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '8px', lineHeight: '1.4' }}>
                   *All client appointment request alerts are dispatched directly to this WhatsApp number.*
