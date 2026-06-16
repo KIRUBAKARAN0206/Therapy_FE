@@ -15,7 +15,6 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
   };
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
 
@@ -82,14 +81,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
     return () => clearInterval(interval);
   }, [isAuthenticated, activeTab]);
 
-  // Automatic logout on unmount/navigating away & Inactivity timeout (10 min)
-  useEffect(() => {
-    // Clear auth session when leaving the page (component unmounting)
-    return () => {
-      sessionStorage.removeItem('admin_auth');
-    };
-  }, []);
-
+  // Inactivity timeout (10 min)
   useEffect(() => {
     if (!isAuthenticated) return;
 
@@ -100,7 +92,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
       if (timeoutId) clearTimeout(timeoutId);
       timeoutId = setTimeout(() => {
         setIsAuthenticated(false);
-        sessionStorage.removeItem('admin_auth');
+        setPassword('');
         alert('Session expired due to inactivity. Please log in again.');
       }, INACTIVITY_TIMEOUT);
     };
@@ -119,19 +111,16 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (username === ADMIN_USER && password === ADMIN_PASS) {
+    if (password === ADMIN_PASS) {
       setIsAuthenticated(true);
-      sessionStorage.setItem('admin_auth', 'true');
       setLoginError('');
     } else {
-      setLoginError('Invalid username or password');
+      setLoginError('Invalid admin password');
     }
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
-    sessionStorage.removeItem('admin_auth');
-    setUsername('');
     setPassword('');
   };
 
@@ -414,21 +403,29 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
 
         {loginError && <div style={{ color: '#ef4444', fontSize: '0.85rem', marginBottom: '16px', fontWeight: '600' }}>{loginError}</div>}
 
-        <form onSubmit={handleLogin}>
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            style={styles.input}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={styles.input}
-          />
+        <style>{`
+          .admin-pass-input {
+            -webkit-text-security: disc !important;
+            text-security: disc !important;
+          }
+        `}</style>
+        <form onSubmit={handleLogin} autoComplete="new-password">
+          {/* Prevent browser autofill by redirecting it to hidden dummy fields */}
+          <input type="text" name="prevent_autofill_username" style={{ display: 'none' }} tabIndex="-1" readOnly />
+          <input type="password" name="prevent_autofill_password" style={{ display: 'none' }} tabIndex="-1" readOnly />
+
+          <div style={{ position: 'relative', marginBottom: '20px' }}>
+            <input
+              type="text"
+              name="admin_secret_entry"
+              placeholder="Enter Admin Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="admin-pass-input"
+              autoComplete="new-password"
+              style={styles.input}
+            />
+          </div>
           <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
             <Lock size={18} /> Access Dashboard
           </button>
