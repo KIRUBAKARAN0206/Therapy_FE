@@ -11,6 +11,8 @@ import AdminPanel from './components/AdminPanel';
 import CallCTA from './components/CallCTA';
 import WhatsAppCTA from './components/WhatsAppCTA';
 import Footer from './components/Footer';
+import PrivacyPolicyPage from './components/PrivacyPolicyPage';
+import TermsOfServicePage from './components/TermsOfServicePage';
 import './App.css';
 
 export default function App() {
@@ -134,6 +136,10 @@ export default function App() {
         return <ContactPage />;
       case '#/booking':
         return <BookingForm onAddBooking={handleAddBooking} />;
+      case '#/privacy-policy':
+        return <PrivacyPolicyPage />;
+      case '#/terms-of-service':
+        return <TermsOfServicePage />;
       case '#/admin':
         return <AdminPanel bookings={bookings} onUpdateBookings={handleUpdateBookings} />;
       default:

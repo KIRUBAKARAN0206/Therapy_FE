@@ -71,6 +71,28 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
     }
   };
 
+  const handleWhatsappReset = async () => {
+    if (window.confirm("⚠️ WARNING: Resetting the WhatsApp session will delete your current credentials and force a logout. You will need to scan a new QR code to reconnect. Are you sure you want to proceed?")) {
+      setLoadingWhatsapp(true);
+      try {
+        const response = await fetch(`${API_BASE}/api/admin/whatsapp-reset`, {
+          method: 'POST'
+        });
+        if (response.ok) {
+          alert('WhatsApp bot session reset. A new QR code is being generated.');
+          await fetchWhatsappStatus();
+        } else {
+          alert('Failed to trigger session reset.');
+        }
+      } catch (e) {
+        console.error('Error resetting WhatsApp bot:', e);
+        alert('Error connecting to backend server.');
+      } finally {
+        setLoadingWhatsapp(false);
+      }
+    }
+  };
+
   // Poll WhatsApp status every 5 seconds when tab is active and authenticated
   useEffect(() => {
     let interval;
@@ -815,23 +837,43 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
                     {whatsappStatus.isConnected ? 'CONNECTED' : 'DISCONNECTED'}
                   </span>
                 </div>
-                <button
-                  onClick={handleWhatsappReconnect}
-                  disabled={loadingWhatsapp}
-                  style={{
-                    backgroundColor: '#fff',
-                    border: '1px solid var(--border-light)',
-                    padding: '8px 16px',
-                    borderRadius: 'var(--radius-sm)',
-                    fontSize: '0.8rem',
-                    fontWeight: '700',
-                    cursor: loadingWhatsapp ? 'not-allowed' : 'pointer',
-                    opacity: loadingWhatsapp ? 0.6 : 1,
-                    transition: 'var(--transition-fast)'
-                  }}
-                >
-                  {loadingWhatsapp ? 'Reconnecting...' : 'Reconnect Bot'}
-                </button>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    onClick={handleWhatsappReconnect}
+                    disabled={loadingWhatsapp}
+                    style={{
+                      backgroundColor: '#fff',
+                      border: '1px solid var(--border-light)',
+                      padding: '8px 16px',
+                      borderRadius: 'var(--radius-sm)',
+                      fontSize: '0.8rem',
+                      fontWeight: '700',
+                      cursor: loadingWhatsapp ? 'not-allowed' : 'pointer',
+                      opacity: loadingWhatsapp ? 0.6 : 1,
+                      transition: 'var(--transition-fast)'
+                    }}
+                  >
+                    {loadingWhatsapp ? 'Reconnecting...' : 'Reconnect Bot'}
+                  </button>
+                  <button
+                    onClick={handleWhatsappReset}
+                    disabled={loadingWhatsapp}
+                    style={{
+                      backgroundColor: '#fee2e2',
+                      border: '1px solid #fca5a5',
+                      color: '#b91c1c',
+                      padding: '8px 16px',
+                      borderRadius: 'var(--radius-sm)',
+                      fontSize: '0.8rem',
+                      fontWeight: '700',
+                      cursor: loadingWhatsapp ? 'not-allowed' : 'pointer',
+                      opacity: loadingWhatsapp ? 0.6 : 1,
+                      transition: 'var(--transition-fast)'
+                    }}
+                  >
+                    Reset Session
+                  </button>
+                </div>
               </div>
 
               <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '16px' }}>

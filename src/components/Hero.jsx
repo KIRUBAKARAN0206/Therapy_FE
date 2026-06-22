@@ -122,10 +122,6 @@ export default function Hero() {
       <div style={styles.bgDecoration}></div>
       <div style={styles.container} className="hero-grid">
         <div style={styles.content}>
-          <div style={styles.trustBadge} className="floating-badge">
-            <Star size={16} fill="var(--accent)" color="var(--accent)" />
-            <span>Top-Rated Clinic in the Region (4.9/5 stars)</span>
-          </div>
           <h1 style={styles.title}>
             Restore Your Movement. <br />
             <span style={styles.span}>Reclaim Your Active Life.</span>
@@ -152,7 +148,7 @@ export default function Hero() {
             </div>
             <div style={styles.trustItem}>
               <Users size={20} color="var(--primary)" />
-              <span style={styles.trustText}>10,000+ Happy Patients</span>
+              <span style={styles.trustText}>5,000+ Happy Patients</span>
             </div>
           </div>
         </div>

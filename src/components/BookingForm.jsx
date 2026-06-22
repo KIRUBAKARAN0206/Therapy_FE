@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Calendar, User, Phone, Mail, Activity, Clock, FileText, CheckCircle2 } from 'lucide-react';
 
 export default function BookingForm({ onAddBooking }) {
@@ -17,8 +17,6 @@ export default function BookingForm({ onAddBooking }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [whatsappWarning, setWhatsappWarning] = useState('');
-  const [bookedSlots, setBookedSlots] = useState([]);
-  const [loadingSlots, setLoadingSlots] = useState(false);
 
   const getTodayDateString = () => {
     const today = new Date();
@@ -27,55 +25,6 @@ export default function BookingForm({ onAddBooking }) {
     const dd = String(today.getDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
   };
-
-  const allTimeSlots = [
-    "09:30 AM",
-    "10:00 AM",
-    "10:30 AM",
-    "11:00 AM",
-    "11:30 AM",
-    "12:00 PM",
-    "12:30 PM",
-    "01:00 PM",
-    "05:00 PM",
-    "05:30 PM",
-    "06:00 PM",
-    "06:30 PM",
-    "07:00 PM",
-    "07:30 PM",
-    "08:00 PM",
-    "08:30 PM"
-  ];
-
-  useEffect(() => {
-    if (!formData.date) {
-      setBookedSlots([]);
-      return;
-    }
-
-    const fetchBookedSlots = async () => {
-      setLoadingSlots(true);
-      try {
-        const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-        const response = await fetch(`${apiBase}/api/bookings/booked-slots?date=${formData.date}`);
-        if (response.ok) {
-          const data = await response.json();
-          setBookedSlots(data);
-          
-          // Reset selected timeSlot if it is already booked
-          if (formData.timeSlot && data.includes(formData.timeSlot)) {
-            setFormData(prev => ({ ...prev, timeSlot: '' }));
-          }
-        }
-      } catch (err) {
-        console.error('Error fetching booked slots:', err);
-      } finally {
-        setLoadingSlots(false);
-      }
-    };
-
-    fetchBookedSlots();
-  }, [formData.date]);
 
   const services = [
     "Sports Injury Rehabilitation",
@@ -415,39 +364,21 @@ export default function BookingForm({ onAddBooking }) {
                   {errors.date && <span style={styles.errorText}>{errors.date}</span>}
                 </div>
 
-                {/* Preferred Time Slot (Dropdown) */}
+                {/* Preferred Time (Manual Input) */}
                 <div style={styles.inputBox}>
-                  <label style={styles.label}><Clock size={16} /> Preferred Time Slot</label>
+                  <label style={styles.label}><Clock size={16} /> Preferred Time</label>
                   <div style={styles.iconWrapper}><Clock size={18} /></div>
-                  <select 
+                  <input 
+                    type="text" 
                     name="timeSlot" 
+                    placeholder="e.g. 10:30 AM or 05:00 PM" 
                     value={formData.timeSlot}
                     onChange={handleInputChange}
-                    disabled={!formData.date || loadingSlots}
                     style={{
                       ...styles.input,
-                      borderColor: errors.timeSlot ? '#ef4444' : 'var(--border-light)',
-                      cursor: (!formData.date || loadingSlots) ? 'not-allowed' : 'pointer'
-                    }}
-                  >
-                    {!formData.date ? (
-                      <option value="">Select date first</option>
-                    ) : loadingSlots ? (
-                      <option value="">Loading slots...</option>
-                    ) : (
-                      <>
-                        <option value="">Select slot</option>
-                        {allTimeSlots.map((slot, index) => {
-                          const isBooked = bookedSlots.includes(slot);
-                          return (
-                            <option key={index} value={slot} disabled={isBooked}>
-                              {slot} {isBooked ? '(Booked)' : ''}
-                            </option>
-                          );
-                        })}
-                      </>
-                    )}
-                  </select>
+                      borderColor: errors.timeSlot ? '#ef4444' : 'var(--border-light)'
+                    }} 
+                  />
                   {errors.timeSlot && <span style={styles.errorText}>{errors.timeSlot}</span>}
                 </div>
 

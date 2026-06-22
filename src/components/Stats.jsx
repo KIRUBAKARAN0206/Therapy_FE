@@ -4,10 +4,10 @@ import { Users, CheckCircle, Award, Calendar } from 'lucide-react';
 export default function Stats() {
   // Target values for counters
   const targets = {
-    patients: 15000,
+    patients: 5000,
     recoveries: 99,
-    therapists: 12,
-    experience: 15
+    therapists: 5,
+    experience: 6
   };
 
   const [counts, setCounts] = useState({
@@ -51,7 +51,7 @@ export default function Stats() {
   const statsList = [
     {
       icon: <Users size={28} color="var(--primary)" />,
-      value: counts.patients.toLocaleString() + "+",
+      value: counts.patients + "+",
       label: "Patients Treated",
       desc: "Recovered physical mobility"
     },
@@ -69,7 +69,7 @@ export default function Stats() {
     },
     {
       icon: <Calendar size={28} color="var(--primary)" />,
-      value: counts.experience + "+",
+      value: counts.experience + "+ years",
       label: "Years of Experience",
       desc: "Combined clinical practice"
     }

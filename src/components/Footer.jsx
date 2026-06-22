@@ -155,8 +155,8 @@ export default function Footer() {
         <div style={styles.bottom}>
           <div>&copy; {currentYear} <span className="notranslate">{getIsTamil() ? 'தி தெரபி யூனிவர்ஸ்' : 'THE THERAPY UNIVERSE'}</span> Clinic. All rights reserved. All clinical practices are conducted by certified medical therapists.</div>
           <div style={{ display: 'flex', gap: '24px' }}>
-            <a href="#" className="footer-link" style={{ fontSize: '0.85rem' }}>Privacy Policy</a>
-            <a href="#" className="footer-link" style={{ fontSize: '0.85rem' }}>Terms of Service</a>
+            <a href="#/privacy-policy" className="footer-link" style={{ fontSize: '0.85rem' }}>Privacy Policy</a>
+            <a href="#/terms-of-service" className="footer-link" style={{ fontSize: '0.85rem' }}>Terms of Service</a>
           </div>
         </div>
       </div>
