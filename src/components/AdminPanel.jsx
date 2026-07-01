@@ -26,13 +26,28 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
   const [activeTab, setActiveTab] = useState('bookings'); // 'bookings' or 'gallery'
   const [galleryPhotos, setGalleryPhotos] = useState([]);
   const [newPhotoTitle, setNewPhotoTitle] = useState('');
-  const [newPhotoCategory, setNewPhotoCategory] = useState('Clinic');
+  const [newPhotoCategory, setNewPhotoCategory] = useState('Rehabilitation Therapy');
+  const [customCategoryName, setCustomCategoryName] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
 
+  const defaultCategories = [
+    'Rehabilitation Therapy',
+    'Treatment Sessions',
+    'Patient Recovery',
+    'Therapy Programs',
+    'Electro Therapy',
+    'Pediatric Therapy'
+  ];
+
+  const uniqueCategories = Array.from(new Set([
+    ...defaultCategories,
+    ...galleryPhotos.map(p => p.category).filter(Boolean)
+  ]));
+
   // Load VITE env credentials
-  const ADMIN_USER = import.meta.env.VITE_ADMIN_USER || 'admin';
-  const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASS || 'admin123';
+  const ADMIN_USER = import.meta.env.VITE_ADMIN_USER || 'The Therapy Universe';
+  const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASS || 'Balasurya PT';
   const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
   // WhatsApp Bot state
@@ -202,60 +217,117 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
     const file = e.target.files[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      setUploadError('Please select a valid image file.');
+    const isImage = file.type.startsWith('image/');
+    const isVideo = file.type.startsWith('video/');
+
+    if (!isImage && !isVideo) {
+      setUploadError('Please select a valid image or video file.');
       return;
     }
+
+    const isConfirmed = window.confirm(`Are you sure you want to upload this file: "${file.name}"?`);
+    if (!isConfirmed) {
+      e.target.value = null; // Reset selection
+      return;
+    }
+
+    const resolvedCategory = newPhotoCategory === '--new--'
+      ? (customCategoryName.trim() || 'General')
+      : newPhotoCategory;
 
     setIsUploading(true);
     setUploadError('');
 
     const reader = new FileReader();
     reader.onload = (event) => {
-      const img = new window.Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const maxDim = 800; // downscale high-res images
-        let width = img.width;
-        let height = img.height;
+      const base64Data = event.target.result;
 
-        if (width > height) {
-          if (width > maxDim) {
-            height = Math.round((height * maxDim) / width);
-            width = maxDim;
+      if (isImage) {
+        const img = new window.Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxDim = 800; // downscale high-res images
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxDim) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
           }
-        } else {
-          if (height > maxDim) {
-            width = Math.round((width * maxDim) / height);
-            height = maxDim;
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Compress JPEG to 70% quality (avg 30KB) to respect localStorage quota
+          const compressedData = canvas.toDataURL('image/jpeg', 0.7);
+
+          const newPhoto = {
+            id: Date.now().toString(),
+            title: newPhotoTitle.trim() || file.name.split('.')[0],
+            category: resolvedCategory,
+            url: compressedData
+          };
+
+          const updated = [newPhoto, ...galleryPhotos];
+          try {
+            localStorage.setItem('clinic_gallery_photos', JSON.stringify(updated));
+            setGalleryPhotos(updated);
+          } catch (storageError) {
+            console.error("Storage limit exceeded", storageError);
+            setUploadError("Browser storage limit reached. Please remove older photos before uploading new ones.");
+            setIsUploading(false);
+            e.target.value = null;
+            return;
           }
-        }
 
-        canvas.width = width;
-        canvas.height = height;
-
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
-
-        // Compress JPEG to 70% quality (avg 30KB) to respect localStorage quota
-        const base64Data = canvas.toDataURL('image/jpeg', 0.7);
-
+          setNewPhotoTitle('');
+          setCustomCategoryName('');
+          if (newPhotoCategory === '--new--') {
+            setNewPhotoCategory(resolvedCategory);
+          }
+          setIsUploading(false);
+          e.target.value = null; // Clear file input selection
+        };
+        img.src = base64Data;
+      } else {
+        // Handle Video upload directly without downscaling
         const newPhoto = {
           id: Date.now().toString(),
           title: newPhotoTitle.trim() || file.name.split('.')[0],
-          category: newPhotoCategory,
+          category: resolvedCategory,
           url: base64Data
         };
 
         const updated = [newPhoto, ...galleryPhotos];
-        setGalleryPhotos(updated);
-        localStorage.setItem('clinic_gallery_photos', JSON.stringify(updated));
+        try {
+          localStorage.setItem('clinic_gallery_photos', JSON.stringify(updated));
+          setGalleryPhotos(updated);
+        } catch (storageError) {
+          console.error("Storage limit exceeded", storageError);
+          setUploadError("Browser storage limit reached. Please remove older photos or videos before uploading new ones.");
+          setIsUploading(false);
+          e.target.value = null;
+          return;
+        }
 
         setNewPhotoTitle('');
+        setCustomCategoryName('');
+        if (newPhotoCategory === '--new--') {
+          setNewPhotoCategory(resolvedCategory);
+        }
         setIsUploading(false);
         e.target.value = null; // Clear file input selection
-      };
-      img.src = event.target.result;
+      }
     };
     reader.readAsDataURL(file);
   };
@@ -548,24 +620,38 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '0.8rem', fontWeight: '750', color: 'var(--text-main)', textTransform: 'uppercase' }}>Category</label>
+                <label style={{ fontSize: '0.8rem', fontWeight: '750', color: 'var(--text-main)', textTransform: 'uppercase' }}>Folder / Category</label>
                 <select
                   value={newPhotoCategory}
                   onChange={(e) => setNewPhotoCategory(e.target.value)}
                   style={{ ...styles.filterSelect, width: '100%', backgroundColor: 'var(--bg-main)' }}
                 >
-                  <option value="Clinic">Clinic</option>
-                  <option value="Equipment">Equipment</option>
-                  <option value="Treatments">Treatments</option>
+                  {uniqueCategories.map(cat => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                  <option value="--new--">+ Create New Folder...</option>
                 </select>
               </div>
 
+              {newPhotoCategory === '--new--' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }} className="fade-in">
+                  <label style={{ fontSize: '0.8rem', fontWeight: '750', color: 'var(--text-main)', textTransform: 'uppercase' }}>New Folder Name</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Rehabilitation Therapy"
+                    value={customCategoryName}
+                    onChange={(e) => setCustomCategoryName(e.target.value)}
+                    style={{ ...styles.filterInput, width: '100%', minWidth: 'auto', backgroundColor: 'var(--bg-main)' }}
+                  />
+                </div>
+              )}
+
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px' }}>
-                <label style={{ fontSize: '0.8rem', fontWeight: '750', color: 'var(--text-main)', textTransform: 'uppercase' }}>Select Photo File</label>
+                <label style={{ fontSize: '0.8rem', fontWeight: '750', color: 'var(--text-main)', textTransform: 'uppercase' }}>Select Photo / Video File</label>
                 <div style={{ position: 'relative', width: '100%' }}>
                   <input
                     type="file"
-                    accept="image/*"
+                    accept="image/*,video/*"
                     onChange={handlePhotoUpload}
                     disabled={isUploading}
                     style={{
@@ -632,11 +718,19 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
                     }}
                   >
                     <div style={{ height: '120px', overflow: 'hidden', position: 'relative' }}>
-                      <img
-                        src={photo.url}
-                        alt={photo.title}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
+                      {photo.url && (photo.url.endsWith('.mp4') || photo.url.endsWith('.webm') || photo.url.endsWith('.ogg') || photo.url.startsWith('data:video/')) ? (
+                        <video
+                          src={photo.url}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          muted
+                        />
+                      ) : (
+                        <img
+                          src={photo.url}
+                          alt={photo.title}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                      )}
                       <span style={{
                         position: 'absolute',
                         top: '8px',

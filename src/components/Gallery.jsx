@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { 
   ArrowLeft, ArrowRight, X, Image as ImageIcon, Heart, Play, Pause, 
   ZoomIn, ZoomOut, RotateCcw, ShieldCheck, 
-  Eye, Award, Activity, Users
+  Eye, Award, Activity, Users, Folder, FolderOpen, Zap, Smile
 } from 'lucide-react';
 
 // Local WebP Assets
@@ -69,6 +69,8 @@ export default function Gallery() {
   const [activeFilter, setActiveFilter] = useState('All');
   const [customPhotos, setCustomPhotos] = useState([]);
   const [selectedPhotoIdx, setSelectedPhotoIdx] = useState(null);
+  const [selectedFolder, setSelectedFolder] = useState(null);
+  const [viewMode, setViewMode] = useState('folders'); // 'folders' or 'all'
   
   // Interactive features states
   const [likedPhotos, setLikedPhotos] = useState([]);
@@ -87,28 +89,12 @@ export default function Gallery() {
 
   const defaultPhotos = [
     {
-      id: "local_1",
-      title: "Advanced Rehabilitation Zone",
-      category: "Rehabilitation Equipment",
-      url: clinicalRehabImg,
-      description: "State-of-the-art rehabilitation room equipped with multi-functional training stations and pneumatic resistance systems.",
-      baseLikes: 48
-    },
-    {
-      id: "local_2",
-      title: "Expert Clinical Specialists",
-      category: "Clinic Environment",
-      url: dedicatedSpecialistsImg,
-      description: "Our board-certified physical therapists coordinating customized recovery programs in a collaborative clinical environment.",
-      baseLikes: 74
-    },
-    {
       id: "local_3",
       title: "Individualized Spinal Mobilization",
       category: "Treatment Sessions",
       url: individualizedTherapyImg,
       description: "Hands-on spinal mobilization and manual therapy tailored specifically to target lower back pain and stiffness.",
-      baseLikes: 53
+      baseLikes: 0
     },
     {
       id: "local_4",
@@ -116,31 +102,7 @@ export default function Gallery() {
       category: "Therapy Programs",
       url: modernTechniquesImg,
       description: "Application of advanced healing technologies including ultrasound and laser therapy for deep tissue recovery.",
-      baseLikes: 39
-    },
-    {
-      id: "local_5",
-      title: "Comprehensive Recovery Framework",
-      category: "Patient Recovery",
-      url: physioAboutBestImg,
-      description: "Tracking progressive patient mobility and joint stabilization through guided strength recovery sessions.",
-      baseLikes: 62
-    },
-    {
-      id: "unsplash_1",
-      title: "Clinical Consultation Suite",
-      category: "Clinic Environment",
-      url: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=800&auto=format&fit=crop&q=80",
-      description: "A bright, welcoming consultation space designed for private and comfortable diagnostic patient assessments.",
-      baseLikes: 31
-    },
-    {
-      id: "unsplash_2",
-      title: "Reception & Healing Atmosphere",
-      category: "Clinic Environment",
-      url: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop&q=80",
-      description: "Our primary reception area designed with calming, stress-reducing color palettes to help patients feel relaxed.",
-      baseLikes: 25
+      baseLikes: 0
     },
     {
       id: "unsplash_3",
@@ -148,15 +110,7 @@ export default function Gallery() {
       category: "Treatment Sessions",
       url: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&auto=format&fit=crop&q=80",
       description: "Targeted skeletal adjustments to restore natural range of motion and relieve muscle strain in the shoulder and neck.",
-      baseLikes: 42
-    },
-    {
-      id: "unsplash_4",
-      title: "Advanced Muscle Resistance Training",
-      category: "Rehabilitation Equipment",
-      url: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&auto=format&fit=crop&q=80",
-      description: "Utilizing professional medical resistance bands and weights to guide targeted muscle group rehabilitation.",
-      baseLikes: 29
+      baseLikes: 0
     },
     {
       id: "unsplash_5",
@@ -164,25 +118,17 @@ export default function Gallery() {
       category: "Therapy Programs",
       url: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&auto=format&fit=crop&q=80",
       description: "Group balance, stabilization, and core programs designed for fall prevention and athletic conditioning.",
-      baseLikes: 35
+      baseLikes: 0
     },
-    {
-      id: "unsplash_6",
-      title: "Active Neuromuscular Re-education",
-      category: "Patient Recovery",
-      url: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=800&auto=format&fit=crop&q=80",
-      description: "Assisted mobility training focused on building balance, strength, and proprioception following surgery.",
-      baseLikes: 46
-    }
   ];
 
-  const categories = [
-    'All',
-    'Clinic Environment',
+  const defaultCategories = [
+    'Rehabilitation Therapy',
     'Treatment Sessions',
-    'Rehabilitation Equipment',
     'Patient Recovery',
-    'Therapy Programs'
+    'Therapy Programs',
+    'Electro Therapy',
+    'Pediatric Therapy'
   ];
 
   // Lock body scroll when lightbox is open
@@ -236,9 +182,20 @@ export default function Gallery() {
   }, []);
 
   const allPhotos = [...customPhotos, ...defaultPhotos];
-  const filteredPhotos = allPhotos.filter(
-    (photo) => activeFilter === 'All' || photo.category === activeFilter
-  );
+
+  const uniqueFolders = Array.from(new Set([
+    ...defaultCategories,
+    ...allPhotos.map(p => p.category).filter(Boolean)
+  ]));
+
+  const categories = [
+    'All',
+    ...uniqueFolders
+  ];
+
+  const filteredPhotos = viewMode === 'folders'
+    ? (selectedFolder ? allPhotos.filter(p => p.category === selectedFolder) : allPhotos)
+    : allPhotos.filter(photo => activeFilter === 'All' || photo.category === activeFilter);
 
   // Keyboard navigation & Slideshow progress timer
   useEffect(() => {
@@ -320,6 +277,63 @@ export default function Gallery() {
     return photo.baseLikes + (likedPhotos.includes(photo.id) ? 1 : 0);
   };
 
+  const getFolderIcon = (folderName) => {
+    switch (folderName) {
+      case 'Rehabilitation Therapy':
+        return <Activity size={20} />;
+      case 'Treatment Sessions':
+        return <Heart size={20} />;
+      case 'Patient Recovery':
+        return <ShieldCheck size={20} />;
+      case 'Therapy Programs':
+        return <Award size={20} />;
+      case 'Electro Therapy':
+        return <Zap size={20} />;
+      case 'Pediatric Therapy':
+        return <Smile size={20} />;
+      default:
+        return <FolderOpen size={20} />;
+    }
+  };
+
+  const getFolderDescription = (folderName) => {
+    switch (folderName) {
+      case 'Rehabilitation Therapy':
+        return 'Restoring strength, mobility, and physical function through targeted plans.';
+      case 'Treatment Sessions':
+        return 'Hands-on clinical manual adjustments and sessions to relieve pain.';
+      case 'Patient Recovery':
+        return 'Tracking progression and milestones in patient healing and rehabilitation.';
+      case 'Therapy Programs':
+        return 'Specialized health, core strength, and stabilization programs.';
+      case 'Electro Therapy':
+        return 'Advanced electric stimulation modalities and ultrasound treatment.';
+      case 'Pediatric Therapy':
+        return "Specialized pediatric physical therapy tailored for children's development.";
+      default:
+        return 'Browse through uploaded visual records, snapshots and clinic activities.';
+    }
+  };
+
+  const getFolderFallback = (folderName) => {
+    switch (folderName) {
+      case 'Rehabilitation Therapy':
+        return 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&auto=format&fit=crop&q=80';
+      case 'Treatment Sessions':
+        return 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&auto=format&fit=crop&q=80';
+      case 'Patient Recovery':
+        return 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=800&auto=format&fit=crop&q=80';
+      case 'Therapy Programs':
+        return 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&auto=format&fit=crop&q=80';
+      case 'Electro Therapy':
+        return 'https://images.unsplash.com/photo-1519824145371-296894a0daa9?w=800&auto=format&fit=crop&q=80';
+      case 'Pediatric Therapy':
+        return 'https://images.unsplash.com/photo-1594824813573-246434e33963?w=800&auto=format&fit=crop&q=80';
+      default:
+        return 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&auto=format&fit=crop&q=80';
+    }
+  };
+
   const resetZoom = () => {
     setLightboxZoom(1);
     setPanOffset({ x: 0, y: 0 });
@@ -337,6 +351,32 @@ export default function Gallery() {
       if (next === 1) setPanOffset({ x: 0, y: 0 });
       return next;
     });
+  };
+
+  const handleMouseMoveFolder = (e) => {
+    const card = e.currentTarget.querySelector('.folder-card');
+    if (!card) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    // Calculate rotation (-10 to 10 deg)
+    const rotateX = -((y / rect.height) - 0.5) * 16;
+    const rotateY = ((x / rect.width) - 0.5) * 16;
+    
+    card.style.transform = `translateY(-10px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+    card.style.boxShadow = `0 30px 60px rgba(20, 184, 166, 0.25), 0 0 35px rgba(20, 184, 166, 0.15)`;
+    card.style.borderColor = `rgba(20, 184, 166, 0.7)`;
+    card.style.setProperty('--mouse-x', `${(x / rect.width) * 100}%`);
+    card.style.setProperty('--mouse-y', `${(y / rect.height) * 100}%`);
+  };
+
+  const handleMouseLeaveFolder = (e) => {
+    const card = e.currentTarget.querySelector('.folder-card');
+    if (!card) return;
+    card.style.transform = '';
+    card.style.boxShadow = '';
+    card.style.borderColor = '';
   };
 
   // Image panning logic inside Lightbox
@@ -404,92 +444,232 @@ export default function Gallery() {
 
       <div className="container" style={{ padding: '0 24px', position: 'relative', zIndex: 5 }}>
         
-        {/* 2. Glassmorphic Filter & Upload Toolbar */}
+        {/* 2. Glassmorphic Filter & View Mode Toolbar */}
         <div className="gallery-toolbar-card glass-card">
           <div className="gallery-filters-container">
-            {categories.map((filter) => {
-              // Count photos in this category
-              const count = allPhotos.filter(p => filter === 'All' || p.category === filter).length;
-              return (
-                <button
-                  key={filter}
-                  onClick={() => setActiveFilter(filter)}
-                  className={`gallery-filter-btn ${activeFilter === filter ? 'active' : ''}`}
-                >
-                  {filter}
-                  <span className="filter-count-badge">{count}</span>
-                </button>
-              );
-            })}
+            {viewMode === 'all' ? (
+              categories.map((filter) => {
+                const count = allPhotos.filter(p => filter === 'All' || p.category === filter).length;
+                return (
+                  <button
+                    key={filter}
+                    onClick={() => setActiveFilter(filter)}
+                    className={`gallery-filter-btn ${activeFilter === filter ? 'active' : ''}`}
+                  >
+                    {filter}
+                    <span className="filter-count-badge">{count}</span>
+                  </button>
+                );
+              })
+            ) : (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: '700' }}>
+                <Folder size={18} color="var(--primary)" /> 
+                {selectedFolder ? `Folder: ${selectedFolder}` : 'All Clinic Folders'}
+              </div>
+            )}
           </div>
 
-        </div>
-
-        {/* 4. Elegant Cards Grid */}
-        {filteredPhotos.length === 0 ? (
-          <div className="gallery-empty-state glass-card">
-            <ImageIcon size={48} className="empty-icon" />
-            <h3>No Visual Assets Found</h3>
-            <p>There are currently no clinical photos matching the selected filter category.</p>
+          {/* View Mode Switcher */}
+          <div className="view-mode-toggle">
             <button 
-              className="btn-primary" 
-              style={{ marginTop: '20px' }} 
-              onClick={() => setActiveFilter('All')}
+              className={`toggle-btn ${viewMode === 'folders' ? 'active' : ''}`}
+              onClick={() => {
+                setViewMode('folders');
+                setSelectedFolder(null);
+              }}
             >
-              Reset Filters
+              Folder View
+            </button>
+            <button 
+              className={`toggle-btn ${viewMode === 'all' ? 'active' : ''}`}
+              onClick={() => {
+                setViewMode('all');
+                setSelectedFolder(null);
+              }}
+            >
+              All Photos
             </button>
           </div>
-        ) : (
-          <div className="gallery-cards-grid" key={activeFilter}>
-            {filteredPhotos.map((photo, idx) => {
-              const isLiked = likedPhotos.includes(photo.id);
-              return (
-                <div
-                  key={photo.id}
-                  onClick={() => openLightbox(photo.id)}
-                  className="gallery-interactive-card"
-                  style={{ animationDelay: `${idx * 40}ms` }}
-                >
-                  <div className="card-media-wrapper">
-                    <span className="card-category-tag">{photo.category}</span>
-                    
-                    <ImageWithLoader
-                      src={photo.url}
-                      alt={photo.title}
-                      className="card-media-img"
-                    />
+        </div>
 
-                    {/* Interactive Overlay */}
-                    <div className="card-action-overlay">
-                      <div className="card-actions-wrapper">
-                        <button 
-                          className={`card-interaction-btn like-btn ${isLiked ? 'liked' : ''}`}
-                          onClick={(e) => handleLike(e, photo.id)}
-                          title={isLiked ? "Unlike" : "Like"}
-                        >
-                          <Heart size={18} fill={isLiked ? "currentColor" : "none"} />
-                          <span>{getLikesCount(photo)}</span>
-                        </button>
+        {/* 4. Elegant Cards / Folders Grid */}
+        {viewMode === 'folders' && selectedFolder === null ? (
+          uniqueFolders.length === 0 ? (
+            <div className="gallery-empty-state glass-card">
+              <Folder size={48} className="empty-icon" />
+              <h3>No Folders Created Yet</h3>
+              <p>Go to Admin Panel to upload images into folders.</p>
+            </div>
+          ) : (
+            <div className="gallery-folders-grid">
+              {uniqueFolders.map((folderName, idx) => {
+                const folderPhotos = allPhotos.filter(p => p.category === folderName);
+                const count = folderPhotos.length;
+                
+                // Get custom photos for this folder
+                const customFolderPhotos = customPhotos.filter(p => p.category === folderName);
+                // The first uploaded photo is the oldest, which is at the end of customFolderPhotos
+                const coverPhoto = customFolderPhotos.length > 0
+                  ? customFolderPhotos[customFolderPhotos.length - 1]?.url
+                  : defaultPhotos.filter(p => p.category === folderName)[0]?.url;
+                return (
+                  <div 
+                    key={folderName}
+                    className="folder-card-wrapper fade-in"
+                    style={{ animationDelay: `${idx * 40}ms` }}
+                    onClick={() => setSelectedFolder(folderName)}
+                    onMouseMove={handleMouseMoveFolder}
+                    onMouseLeave={handleMouseLeaveFolder}
+                  >
+                    <div className="folder-card">
+                      <div className="folder-cover-img-container">
+                        <img 
+                          src={coverPhoto || getFolderFallback(folderName)} 
+                          alt={folderName} 
+                          className="folder-cover-img" 
+                          onError={(e) => {
+                            e.target.src = getFolderFallback(folderName);
+                          }}
+                        />
+                      </div>
+                      
+                      <div className="folder-details">
+                        {/* Title and Icon row */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                          <span style={{ color: 'var(--primary)', display: 'inline-flex' }}>
+                            {getFolderIcon(folderName)}
+                          </span>
+                          <h3 style={{ margin: 0 }}>{folderName}</h3>
+                        </div>
 
-                        <div className="zoom-circle-indicator">
-                          <Eye size={20} />
+                        {/* 2-line Description */}
+                        <p style={{ 
+                          fontSize: '0.82rem', 
+                          color: 'var(--text-muted)', 
+                          margin: '0 0 16px 0', 
+                          lineHeight: '1.45', 
+                          display: '-webkit-box',
+                          WebkitLineClamp: '2',
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                          fontWeight: '500'
+                        }}>
+                          {getFolderDescription(folderName)}
+                        </p>
+
+                        {/* Count Pill */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
+                          <span className="filter-count-badge" style={{ background: 'var(--bg-main)', color: 'var(--text-muted)', border: '1px solid var(--border-light)', padding: '4px 10px', fontSize: '0.75rem', fontWeight: '800' }}>
+                            {count} {count === 1 ? 'item' : 'items'}
+                          </span>
                         </div>
                       </div>
                     </div>
                   </div>
+                );
+              })}
+            </div>
+          )
+        ) : (
+          <div>
+            {viewMode === 'folders' && selectedFolder && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => setSelectedFolder(null)}
+                  className="gallery-filter-btn"
+                  style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 18px', borderRadius: '30px' }}
+                >
+                  <ArrowLeft size={16} /> Back to Folders
+                </button>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: '800', color: 'var(--bg-dark)', display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
+                  <FolderOpen size={22} color="var(--primary)" /> {selectedFolder}
+                </h2>
+              </div>
+            )}
 
-                  <div className="card-info-pane">
-                    <div className="info-title-row">
-                      <h4>{photo.title}</h4>
-                      <div className="certified-badge">
-                        <ShieldCheck size={15} />
+            {filteredPhotos.length === 0 ? (
+              <div className="gallery-empty-state glass-card">
+                <ImageIcon size={48} className="empty-icon" />
+                <h3>No Visual Assets Found</h3>
+                <p>There are currently no clinical photos inside this view.</p>
+                {viewMode === 'all' && (
+                  <button 
+                    className="btn-primary" 
+                    style={{ marginTop: '20px' }} 
+                    onClick={() => setActiveFilter('All')}
+                  >
+                    Reset Filters
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="gallery-cards-grid" key={selectedFolder || activeFilter}>
+                {filteredPhotos.map((photo, idx) => {
+                  const isLiked = likedPhotos.includes(photo.id);
+                  return (
+                    <div
+                      key={photo.id}
+                      onClick={() => openLightbox(photo.id)}
+                      className="gallery-interactive-card"
+                      style={{ animationDelay: `${idx * 40}ms` }}
+                    >
+                      <div className="card-media-wrapper">
+                        <span className="card-category-tag">{photo.category}</span>
+                        
+                        {photo.url && (photo.url.endsWith('.mp4') || photo.url.endsWith('.webm') || photo.url.endsWith('.ogg') || photo.url.startsWith('data:video/')) ? (
+                          <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
+                            <video
+                              src={photo.url}
+                              className="card-media-img"
+                              style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                              muted
+                              playsInline
+                            />
+                            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: 'rgba(0,0,0,0.6)', borderRadius: '50%', padding: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              <Play size={20} color="#fff" fill="#fff" />
+                            </div>
+                          </div>
+                        ) : (
+                          <ImageWithLoader
+                            src={photo.url}
+                            alt={photo.title}
+                            className="card-media-img"
+                          />
+                        )}
+
+                        {/* Interactive Overlay */}
+                        <div className="card-action-overlay">
+                          <div className="card-actions-wrapper">
+                            <button 
+                              className={`card-interaction-btn like-btn ${isLiked ? 'liked' : ''}`}
+                              onClick={(e) => handleLike(e, photo.id)}
+                              title={isLiked ? "Unlike" : "Like"}
+                            >
+                              <Heart size={18} fill={isLiked ? "currentColor" : "none"} />
+                              <span>{getLikesCount(photo)}</span>
+                            </button>
+
+                            <div className="zoom-circle-indicator">
+                              {photo.url && (photo.url.endsWith('.mp4') || photo.url.endsWith('.webm') || photo.url.endsWith('.ogg') || photo.url.startsWith('data:video/')) ? <Play size={20} /> : <Eye size={20} />}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="card-info-pane">
+                        <div className="info-title-row">
+                          <h4>{photo.title}</h4>
+                          <div className="certified-badge">
+                            <ShieldCheck size={15} />
+                          </div>
+                        </div>
+                        <p>{photo.description || 'Professional therapy environment offering patient recovery.'}</p>
                       </div>
                     </div>
-                    <p>{photo.description || 'Professional therapy environment offering patient recovery.'}</p>
-                  </div>
-                </div>
-              );
-            })}
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -581,17 +761,27 @@ export default function Gallery() {
               onMouseLeave={handleMouseUp}
               style={{ cursor: lightboxZoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
             >
-              <img
-                ref={lightboxImgRef}
-                src={filteredPhotos[selectedPhotoIdx].url}
-                alt={filteredPhotos[selectedPhotoIdx].title}
-                className="lightbox-main-img"
-                style={{
-                  transform: `scale(${lightboxZoom}) translate(${panOffset.x / lightboxZoom}px, ${panOffset.y / lightboxZoom}px)`,
-                  transition: isDragging ? 'none' : 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
-                }}
-                draggable="false"
-              />
+              {filteredPhotos[selectedPhotoIdx].url && (filteredPhotos[selectedPhotoIdx].url.endsWith('.mp4') || filteredPhotos[selectedPhotoIdx].url.endsWith('.webm') || filteredPhotos[selectedPhotoIdx].url.endsWith('.ogg') || filteredPhotos[selectedPhotoIdx].url.startsWith('data:video/')) ? (
+                <video
+                  src={filteredPhotos[selectedPhotoIdx].url}
+                  controls
+                  autoPlay
+                  className="lightbox-main-img"
+                  style={{ maxHeight: '80vh', maxWidth: '100%', objectFit: 'contain' }}
+                />
+              ) : (
+                <img
+                  ref={lightboxImgRef}
+                  src={filteredPhotos[selectedPhotoIdx].url}
+                  alt={filteredPhotos[selectedPhotoIdx].title}
+                  className="lightbox-main-img"
+                  style={{
+                    transform: `scale(${lightboxZoom}) translate(${panOffset.x / lightboxZoom}px, ${panOffset.y / lightboxZoom}px)`,
+                    transition: isDragging ? 'none' : 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
+                  }}
+                  draggable="false"
+                />
+              )}
             </div>
 
             {/* Right navigation arrow */}
@@ -625,7 +815,13 @@ export default function Gallery() {
                     onClick={() => { setSelectedPhotoIdx(idx); resetZoom(); }}
                     className={`lightbox-thumb-container ${selectedPhotoIdx === idx ? 'active' : ''}`}
                   >
-                    <img src={photo.url} alt={photo.title} className="lightbox-thumb-img" />
+                    {photo.url && (photo.url.endsWith('.mp4') || photo.url.endsWith('.webm') || photo.url.endsWith('.ogg') || photo.url.startsWith('data:video/')) ? (
+                      <div style={{ width: '100%', height: '100%', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Play size={14} color="#fff" />
+                      </div>
+                    ) : (
+                      <img src={photo.url} alt={photo.title} className="lightbox-thumb-img" />
+                    )}
                   </div>
                 ))}
               </div>
@@ -642,6 +838,129 @@ export default function Gallery() {
 
       {/* Embedded Highly Attractive CSS Override Rules */}
       <style>{`
+        /* Folder View styling */
+        .gallery-folders-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          gap: 32px;
+          margin-bottom: 80px;
+        }
+
+        .folder-card-wrapper {
+          perspective: 1000px;
+          cursor: pointer;
+        }
+
+        .folder-card {
+          position: relative;
+          background: #ffffff;
+          border: 1px solid var(--border-light);
+          border-radius: var(--radius-lg);
+          height: 350px;
+          display: flex;
+          flex-direction: column;
+          transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+          box-shadow: var(--shadow-sm);
+          overflow: hidden;
+        }
+
+        /* Folder tabs */
+        .folder-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 20px;
+          width: 80px;
+          height: 15px;
+          background: #f8fafc;
+          border-radius: 10px 10px 0 0;
+          border: 1px solid var(--border-light);
+          border-bottom: none;
+          transform: translateY(-100%);
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+          z-index: 1;
+        }
+
+        .folder-card:hover {
+          transform: translateY(-8px) rotateX(2deg);
+          box-shadow: var(--shadow-premium);
+          border-color: rgba(20, 184, 166, 0.4);
+        }
+
+        .folder-card:hover::before {
+          background: #ffffff;
+          border-color: rgba(20, 184, 166, 0.4);
+        }
+
+        .folder-cover-img-container {
+          position: relative;
+          width: 100%;
+          height: 170px;
+          overflow: hidden;
+          background-color: #f1f5f9;
+        }
+
+        .folder-cover-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .folder-card:hover .folder-cover-img {
+          transform: scale(1.08) rotate(0.5deg);
+        }
+
+        .folder-details {
+          padding: 20px;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          flex-grow: 1;
+          background: #ffffff;
+        }
+
+        .folder-details h3 {
+          font-size: 1.15rem;
+          font-weight: 800;
+          color: var(--bg-dark);
+          margin: 0;
+          letter-spacing: -0.01em;
+        }
+
+        .folder-details span {
+          font-size: 0.8rem;
+          font-weight: 600;
+          color: var(--text-muted);
+        }
+
+        /* Toggle switches */
+        .view-mode-toggle {
+          display: flex;
+          background: rgba(15, 23, 42, 0.05);
+          padding: 4px;
+          border-radius: 30px;
+          border: 1px solid var(--border-light);
+        }
+
+        .toggle-btn {
+          border: none;
+          background: none;
+          padding: 6px 16px;
+          font-size: 0.8rem;
+          font-weight: 700;
+          border-radius: 30px;
+          cursor: pointer;
+          color: var(--text-muted);
+          transition: all 0.3s ease;
+        }
+
+        .toggle-btn.active {
+          background: #ffffff;
+          color: var(--primary);
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
         /* 1. Gallery Hero Design */
         .gallery-hero-banner {
           position: relative;
@@ -690,6 +1009,7 @@ export default function Gallery() {
           text-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
           margin-top: 16px;
           margin-bottom: 16px;
+          animation: slideDown 1s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
 
         .gallery-hero-subtitle {
@@ -699,6 +1019,8 @@ export default function Gallery() {
           margin-bottom: 36px;
           text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
           font-family: var(--font-body);
+          animation: slideDown 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+          animation-delay: 0.1s;
         }
 
         /* Hero Stats Grid */
@@ -709,6 +1031,8 @@ export default function Gallery() {
           gap: 40px;
           flex-wrap: wrap;
           margin-top: 12px;
+          animation: slideDown 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+          animation-delay: 0.2s;
         }
 
         .gallery-stat-item {

@@ -13,6 +13,7 @@ import WhatsAppCTA from './components/WhatsAppCTA';
 import Footer from './components/Footer';
 import PrivacyPolicyPage from './components/PrivacyPolicyPage';
 import TermsOfServicePage from './components/TermsOfServicePage';
+import OnlineTherapyPage from './components/OnlineTherapyPage';
 import './App.css';
 
 export default function App() {
@@ -140,6 +141,8 @@ export default function App() {
         return <PrivacyPolicyPage />;
       case '#/terms-of-service':
         return <TermsOfServicePage />;
+      case '#/online-therapy':
+        return <OnlineTherapyPage onAddBooking={handleAddBooking} />;
       case '#/admin':
         return <AdminPanel bookings={bookings} onUpdateBookings={handleUpdateBookings} />;
       default:

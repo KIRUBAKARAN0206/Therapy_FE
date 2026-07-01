@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, User, Phone, Mail, Activity, Clock, FileText, CheckCircle2 } from 'lucide-react';
+import { Calendar, User, Phone, Mail, Activity, FileText, CheckCircle2 } from 'lucide-react';
 
 export default function BookingForm({ onAddBooking }) {
   const [formData, setFormData] = useState({
@@ -9,7 +9,6 @@ export default function BookingForm({ onAddBooking }) {
     service: '',
     customService: '',
     date: '',
-    timeSlot: '',
     message: ''
   });
   const [submitted, setSubmitted] = useState(false);
@@ -69,7 +68,6 @@ export default function BookingForm({ onAddBooking }) {
         newErrors.date = 'Booking date cannot be in the past';
       }
     }
-    if (!formData.timeSlot.trim()) newErrors.timeSlot = 'Preferred time slot is required';
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -89,7 +87,6 @@ export default function BookingForm({ onAddBooking }) {
         phone: formData.phone,
         service: selectedService,
         date: formData.date,
-        timeSlot: formData.timeSlot,
         message: formData.message,
         status: 'Pending'
       };
@@ -234,7 +231,7 @@ export default function BookingForm({ onAddBooking }) {
               <CheckCircle2 size={64} color="var(--success)" />
               <h3 style={styles.successTitle}>Request Submitted Successfully!</h3>
               <p style={styles.successText}>
-                Thank you, <strong>{formData.name}</strong>. Your appointment request for <strong>{formData.date}</strong> at <strong>{formData.timeSlot}</strong> has been logged. Our reception specialist will contact you shortly to finalize details.
+                Thank you, <strong>{formData.name}</strong>. Your appointment request for <strong>{formData.date}</strong> has been logged. Our reception specialist will contact you shortly to finalize details.
               </p>
               {whatsappWarning && (
                 <div style={{ color: '#b45309', backgroundColor: '#fef3c7', border: '1px solid #fcd34d', padding: '12px 16px', borderRadius: 'var(--radius-sm)', fontSize: '0.85rem', fontWeight: '700', maxWidth: '500px', marginTop: '8px', textAlign: 'center' }}>
@@ -242,7 +239,7 @@ export default function BookingForm({ onAddBooking }) {
                 </div>
               )}
               <button 
-                onClick={() => { setSubmitted(false); setFormData({ name:'', email:'', phone:'', service:'', customService: '', date:'', timeSlot:'', message:'' }); setWhatsappWarning(''); setSubmitError(''); }}
+                onClick={() => { setSubmitted(false); setFormData({ name:'', email:'', phone:'', service:'', customService: '', date:'', message:'' }); setWhatsappWarning(''); setSubmitError(''); }}
                 className="btn-primary"
                 style={{ marginTop: '16px' }}
               >
@@ -364,23 +361,6 @@ export default function BookingForm({ onAddBooking }) {
                   {errors.date && <span style={styles.errorText}>{errors.date}</span>}
                 </div>
 
-                {/* Preferred Time (Manual Input) */}
-                <div style={styles.inputBox}>
-                  <label style={styles.label}><Clock size={16} /> Preferred Time</label>
-                  <div style={styles.iconWrapper}><Clock size={18} /></div>
-                  <input 
-                    type="text" 
-                    name="timeSlot" 
-                    placeholder="e.g. 10:30 AM or 05:00 PM" 
-                    value={formData.timeSlot}
-                    onChange={handleInputChange}
-                    style={{
-                      ...styles.input,
-                      borderColor: errors.timeSlot ? '#ef4444' : 'var(--border-light)'
-                    }} 
-                  />
-                  {errors.timeSlot && <span style={styles.errorText}>{errors.timeSlot}</span>}
-                </div>
 
                 {/* Brief Message */}
                 <div style={{ ...styles.inputBox, gridColumn: 'span 2' }} className="booking-message-span">

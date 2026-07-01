@@ -67,6 +67,7 @@ export default function Navbar() {
     { name: 'About Us', href: '#/about' },
     { name: 'Services', href: '#/services' },
     { name: 'Conditions', href: '#/conditions' },
+    { name: 'Online Consult', href: '#/online-therapy' },
     { name: 'Gallery', href: '#/gallery' },
     { name: 'Contact', href: '#/contact' }
   ];
@@ -86,7 +87,7 @@ export default function Navbar() {
       boxShadow: scrolled ? 'var(--shadow-sm)' : '0 2px 10px rgba(30, 64, 175, 0.01)'
     },
     nav: {
-      maxWidth: '1200px',
+      maxWidth: '1400px',
       margin: '0 auto',
       display: 'flex',
       alignItems: 'center',
@@ -278,22 +279,33 @@ export default function Navbar() {
 
       {/* CSS overrides for desktop/mobile toggle display */}
       <style>{`
-        @media (max-width: 1200px) {
+        @media (max-width: 1400px) {
           .desktop-nav {
-            gap: 10px !important;
+            gap: 12px !important;
           }
           .nav-link {
-            font-size: 0.82rem !important;
+            font-size: 0.84rem !important;
           }
           .brand-logo-text {
-            font-size: 1.15rem !important;
+            font-size: 1.1rem !important;
+          }
+        }
+        @media (max-width: 1200px) {
+          .desktop-nav {
+            gap: 8px !important;
+          }
+          .nav-link {
+            font-size: 0.78rem !important;
+          }
+          .brand-logo-text {
+            font-size: 1rem !important;
           }
           .lang-selector {
             padding: 4px 6px !important;
-            font-size: 0.8rem !important;
+            font-size: 0.78rem !important;
           }
         }
-        @media (max-width: 992px) {
+        @media (max-width: 1100px) {
           .desktop-nav {
             display: none !important;
           }

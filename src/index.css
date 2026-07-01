@@ -472,17 +472,19 @@ button, input, select, textarea {
   text-shadow: 0 2px 8px rgba(0,0,0,0.65);
 }
 
-.hero-title-gradient {
-  font-size: 4.0rem; /* Increased size slightly for outstanding prominent visibility */
-  font-weight: 850;
-  letter-spacing: -0.03em;
-  background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 45%, #38bdf8 100%); /* Brighter White to Light Sky-Blue to Sky-Cyan */
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.65)); /* Darker shadow for extreme text brightness pop */
-  margin-bottom: 12px;
-  display: inline-block;
+.hero-title-gradient, .hero-text h1.hero-title-gradient {
+  font-size: 3.2rem !important; /* Slightly reduced for a cleaner, balanced layout */
+  font-weight: 850 !important;
+  letter-spacing: -0.03em !important;
+  text-transform: uppercase !important;
+  background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 45%, #38bdf8 100%) !important; /* Brighter White to Light Sky-Blue to Sky-Cyan */
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.65)) !important; /* Darker shadow for extreme text brightness pop */
+  margin-bottom: 12px !important;
+  display: inline-block !important;
 }
 
 .hero-text .breadcrumb {
@@ -502,15 +504,15 @@ button, input, select, textarea {
 /* Responsive height and text adjustments */
 @media (max-width: 1024px) {
   .hero-full-bg { max-height: 380px; }
-  .hero-title-gradient { font-size: 3.3rem; } /* Increased from 3.0rem */
+  .hero-title-gradient, .hero-text h1.hero-title-gradient { font-size: 2.7rem !important; }
 }
 @media (max-width: 768px) {
   .hero-full-bg { max-height: 290px; }
-  .hero-title-gradient { font-size: 2.8rem; } /* Increased from 2.6rem */
+  .hero-title-gradient, .hero-text h1.hero-title-gradient { font-size: 2.2rem !important; }
 }
 @media (max-width: 480px) {
   .hero-full-bg { max-height: 220px; }
-  .hero-title-gradient { font-size: 2.2rem; } /* Increased from 2.0rem */
+  .hero-title-gradient, .hero-text h1.hero-title-gradient { font-size: 1.8rem !important; }
 }
 
 @keyframes fadeInUp {

@@ -130,6 +130,7 @@ export default function Footer() {
               <li><a href="#/about" className="footer-link">About Us</a></li>
               <li><a href="#/services" className="footer-link">Our Services</a></li>
               <li><a href="#/conditions" className="footer-link">Conditions We Treat</a></li>
+              <li><a href="#/online-therapy" className="footer-link">Online Consultation</a></li>
               <li><a href="#/gallery" className="footer-link">Photo Gallery</a></li>
               <li><a href="#/contact" className="footer-link">Contact Details</a></li>
             </ul>

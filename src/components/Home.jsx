@@ -1,11 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import Hero from './Hero';
 import Stats from './Stats';
-import { ArrowRight, Phone, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Phone, CheckCircle2, Video } from 'lucide-react';
 import therapyImg from '../assets/individualized_therapy.png';
 import techniquesImg from '../assets/modern_techniques.png';
 import specialistsImg from '../assets/dedicated_specialists.png';
 import clinicalRehabImg from '../assets/clinical_rehab.png';
+import onlineTherapyImg from '../assets/online_therapy.png';
 
 export default function Home({ onNavigate }) {
   const cardRefs = useRef([]);
@@ -137,7 +138,7 @@ export default function Home({ onNavigate }) {
       alignItems: 'center',
       position: 'relative',
       overflow: 'hidden',
-      maxWidth: '1200px',
+      maxWidth: '100%',
       margin: '0 auto'
     },
     bannerTitle: {
@@ -190,6 +191,53 @@ export default function Home({ onNavigate }) {
       boxShadow: '0 12px 30px rgba(0, 0, 0, 0.25)',
       border: '4px solid rgba(255, 255, 255, 0.08)',
       transition: 'var(--transition-smooth)'
+    },
+    onlineSection: {
+      background: 'linear-gradient(135deg, rgba(240, 253, 250, 0.9) 0%, rgba(224, 242, 254, 0.9) 100%)',
+      padding: '85px 24px',
+      borderBottom: '1px solid var(--border-light)',
+      position: 'relative'
+    },
+    onlineGrid: {
+      display: 'grid',
+      gridTemplateColumns: '1.1fr 0.9fr',
+      gap: '56px',
+      alignItems: 'center',
+      maxWidth: '1200px',
+      margin: '0 auto'
+    },
+    onlineBullets: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '18px',
+      margin: '28px 0 36px'
+    },
+    onlineBulletItem: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '12px',
+      fontSize: '0.95rem',
+      fontWeight: '600',
+      color: 'var(--text-main)'
+    },
+    onlineBulletIcon: {
+      width: '38px',
+      height: '38px',
+      borderRadius: '50%',
+      backgroundColor: 'var(--primary-glow)',
+      color: 'var(--primary)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexShrink: 0
+    },
+    onlineImage: {
+      width: '100%',
+      height: '350px',
+      objectFit: 'cover',
+      borderRadius: 'var(--radius-lg)',
+      boxShadow: 'var(--shadow-premium)',
+      border: '6px solid rgba(255, 255, 255, 0.75)'
     }
   };
 
@@ -320,78 +368,55 @@ export default function Home({ onNavigate }) {
         </div>
       </section>
 
-      {/* Redesigned Full Width CTA Banner with Header */}
-      <section style={styles.ctaSection} className="cta-full-section">
+      {/* Online Therapy Promotional Section */}
+      <section style={styles.onlineSection} className="online-promotional-section">
         <div className="container">
-          <div className="text-center" style={{ marginBottom: '50px' }}>
-            <span className="section-tag">Direct Access</span>
-            <h2 className="section-title">Schedule Your Evaluation</h2>
-            <p className="section-desc" style={{ marginBottom: 0 }}>
-              Start your journey toward optimal health and mobility today with certified, evidence-based therapy sessions tailored to your needs.
-            </p>
-          </div>
-
-          <div style={styles.ctaCard} className="compact-cta-card">
+          <div style={styles.onlineGrid} className="online-promo-grid">
             <div>
-              <h3 style={styles.bannerTitle}>Start Your Recovery Journey Today</h3>
-              <p style={styles.bannerDesc}>
-                Book a comprehensive assessment with our clinical physiotherapist to diagnose movement restrictions and customize a direct therapy plan.
+              <div style={{ display: 'flex', justifyContent: 'center', width: '100%', marginBottom: '16px' }}>
+                <span className="section-tag" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', margin: 0 }}>
+                  <Video size={14} /> New: Remote Rehabilitation
+                </span>
+              </div>
+              <h2 className="section-title" style={{ fontSize: '2.5rem', textAlign: 'left', marginBottom: '18px' }}>
+                Consult Dr. Balasurya Online
+              </h2>
+              <p style={{ fontSize: '1.05rem', color: 'var(--text-muted)', lineHeight: '1.7', maxWidth: '580px' }}>
+                Can't travel to our clinic? You can now schedule virtual appointments. We provide thorough assessments, range-of-motion diagnostics, and custom physical therapy plans via Google Meet, Zoom, or WhatsApp video call.
               </p>
               
-              <div style={styles.highlightsGrid}>
-                <div style={styles.highlightItem}>
-                  <span style={styles.highlightIcon}><CheckCircle2 size={16} color="var(--secondary)" /></span>
-                  <span>1-on-1 Assessment</span>
+              <div style={styles.onlineBullets}>
+                <div style={styles.onlineBulletItem}>
+                  <div style={styles.onlineBulletIcon}><Video size={16} /></div>
+                  <span>1-on-1 Interactive Video Sessions</span>
                 </div>
-                <div style={styles.highlightItem}>
-                  <span style={styles.highlightIcon}><CheckCircle2 size={16} color="var(--secondary)" /></span>
-                  <span>Personalized Therapy</span>
+                <div style={styles.onlineBulletItem}>
+                  <div style={styles.onlineBulletIcon}><CheckCircle2 size={16} /></div>
+                  <span>Personalized Digital Rehab Prescriptions</span>
                 </div>
-                <div style={styles.highlightItem}>
-                  <span style={styles.highlightIcon}><CheckCircle2 size={16} color="var(--secondary)" /></span>
-                  <span>Expert Physiotherapist</span>
-                </div>
-                <div style={styles.highlightItem}>
-                  <span style={styles.highlightIcon}><CheckCircle2 size={16} color="var(--secondary)" /></span>
-                  <span>House Visits Available</span>
+                <div style={styles.onlineBulletItem}>
+                  <div style={styles.onlineBulletIcon}><Phone size={16} /></div>
+                  <span>Weekly Recovery Reviews on WhatsApp</span>
                 </div>
               </div>
 
-              <div style={styles.btnGroup}>
-                <button onClick={() => onNavigate('booking')} className="btn-primary">
-                  Book Appointment <ArrowRight size={18} />
+              <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                <button onClick={() => onNavigate('online-therapy')} className="btn-primary">
+                  Book Online Session <ArrowRight size={18} />
                 </button>
-                <a 
-                  href="tel:+918220952580" 
-                  className="btn-secondary"
-                  style={{ 
-                    color: '#fff', 
-                    borderColor: 'rgba(255, 255, 255, 0.3)', 
-                    background: 'transparent'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = '#fff';
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-                    e.currentTarget.style.background = 'transparent';
-                    e.currentTarget.style.transform = 'translateY(0)';
-                  }}
-                >
-                  <Phone size={16} /> Call Clinic
-                </a>
+                <button onClick={() => onNavigate('online-therapy')} className="btn-secondary" style={{ background: 'rgba(255,255,255,0.5)' }}>
+                  Learn More
+                </button>
               </div>
             </div>
-            <div className="cta-image-wrapper" style={{ overflow: 'hidden', borderRadius: 'var(--radius-md)' }}>
+
+            <div className="online-promo-image-wrap" style={{ display: 'flex', justifyContent: 'center' }}>
               <img 
-                src={clinicalRehabImg} 
-                alt="Physiotherapy treatment session" 
-                style={styles.ctaImage}
-                className="cta-image-hover"
+                src={onlineTherapyImg} 
+                alt="Physiotherapist virtual video call consultation" 
+                style={styles.onlineImage}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'scale(1.04)';
+                  e.currentTarget.style.transform = 'scale(1.02)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'scale(1)';
@@ -404,11 +429,116 @@ export default function Home({ onNavigate }) {
 
       <style>{`
         @media (max-width: 992px) {
-          .compact-cta-card {
+          .online-promo-grid {
             grid-template-columns: 1fr !important;
-            padding: 36px 28px !important;
-            gap: 36px !important;
+            gap: 40px !important;
+            text-align: center;
           }
+          .online-promo-grid h2 {
+            text-align: center !important;
+          }
+          .online-promo-grid p {
+            margin: 0 auto !important;
+          }
+          .online-promo-grid div {
+            justify-content: center !important;
+          }
+          .online-promo-image-wrap {
+            max-width: 480px;
+            margin: 0 auto;
+            width: 100%;
+          }
+          .online-promo-image-wrap img {
+            height: 280px !important;
+          }
+        }
+      `}</style>
+
+      <section style={styles.ctaSection} className="cta-full-section">
+        <div className="container">
+          <div style={styles.onlineGrid} className="online-promo-grid">
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'flex-start', width: '100%', marginBottom: '16px' }}>
+                <span className="section-tag" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', margin: 0 }}>
+                  Direct Access
+                </span>
+              </div>
+              <h2 className="section-title" style={{ fontSize: '2.5rem', textAlign: 'left', marginBottom: '18px' }}>
+                Schedule Your Evaluation
+              </h2>
+              <p style={{ fontSize: '1.05rem', color: 'var(--text-muted)', lineHeight: '1.7', maxWidth: '580px' }}>
+                Start your journey toward optimal health and mobility today with certified, evidence-based therapy sessions tailored to your needs. Book a comprehensive assessment with our clinical physiotherapist to diagnose movement restrictions and customize a direct therapy plan.
+              </p>
+              
+              <div style={styles.onlineBullets}>
+                <div style={styles.onlineBulletItem}>
+                  <div style={styles.onlineBulletIcon}><CheckCircle2 size={16} /></div>
+                  <span>1-on-1 Personal Assessment</span>
+                </div>
+                <div style={styles.onlineBulletItem}>
+                  <div style={styles.onlineBulletIcon}><CheckCircle2 size={16} /></div>
+                  <span>Customized Hands-on Therapy</span>
+                </div>
+                <div style={styles.onlineBulletItem}>
+                  <div style={styles.onlineBulletIcon}><CheckCircle2 size={16} /></div>
+                  <span>Expert Clinical Rehabilitation</span>
+                </div>
+                <div style={styles.onlineBulletItem}>
+                  <div style={styles.onlineBulletIcon}><CheckCircle2 size={16} /></div>
+                  <span>Home Visits & In-Clinic Sessions</span>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                <button onClick={() => onNavigate('booking')} className="btn-primary">
+                  Book Appointment <ArrowRight size={18} />
+                </button>
+                <a 
+                  href="tel:+918220952580" 
+                  className="btn-secondary"
+                  style={{ 
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    color: 'var(--text-main)', 
+                    borderColor: 'var(--border-light)', 
+                    background: 'rgba(0, 0, 0, 0.05)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--primary)';
+                    e.currentTarget.style.background = 'rgba(0, 0, 0, 0.08)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--border-light)';
+                    e.currentTarget.style.background = 'rgba(0, 0, 0, 0.05)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <Phone size={16} /> Call Clinic
+                </a>
+              </div>
+            </div>
+
+            <div className="online-promo-image-wrap" style={{ display: 'flex', justifyContent: 'center' }}>
+              <img 
+                src={clinicalRehabImg} 
+                alt="Physiotherapy treatment session" 
+                style={styles.onlineImage}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'scale(1.02)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'scale(1)';
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <style>{`
+        @media (max-width: 992px) {
           .cta-image-wrapper {
             max-width: 480px;
             margin: 0 auto;
@@ -416,11 +546,6 @@ export default function Home({ onNavigate }) {
           }
           .cta-image-wrapper img {
             height: 240px !important;
-          }
-        }
-        @media (max-width: 576px) {
-          .compact-cta-card {
-            padding: 28px 20px !important;
           }
         }
       `}</style>

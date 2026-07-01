@@ -33,7 +33,8 @@ export default function Specialists() {
     { title: "Orthopedics", desc: "Bone, muscle & joint conditions" },
     { title: "Pain Management", desc: "Chronic pain relief therapies" },
     { title: "Post-Surgical Care", desc: "Post-op function restoration" },
-    { title: "Myofascial Release", desc: "Trigger point & muscle tension relief" }
+    { title: "Myofascial Release", desc: "Trigger point & muscle tension relief" },
+    { title: "Pediatric Therapy", desc: "Child development & pediatric rehab" }
   ];
 
   return (
