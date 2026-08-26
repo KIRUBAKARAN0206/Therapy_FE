@@ -205,13 +205,26 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
   useEffect(() => {
     const fetchGallery = async () => {
       try {
-        const response = await fetch(`${API_BASE}/api/gallery`);
-        if (response.ok) {
-          const data = await response.json();
-          setGalleryPhotos(data);
+        let backendData = [];
+        try {
+          const response = await fetch(`${API_BASE}/api/gallery`);
+          if (response.ok) {
+            backendData = await response.json();
+          }
+        } catch (apiError) {
+          console.error("Backend fetch failed, relying on local storage", apiError);
         }
+
+        // Restore legacy photos from localStorage
+        const localData = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
+        
+        // Merge and deduplicate
+        const allPhotos = [...backendData, ...localData];
+        const uniquePhotos = Array.from(new Map(allPhotos.map(p => [p.id, p])).values());
+        
+        setGalleryPhotos(uniquePhotos);
       } catch (e) {
-        console.error("Failed to fetch gallery photos from server", e);
+        console.error("Failed to parse gallery photos", e);
       }
     };
     fetchGallery();
@@ -325,7 +338,15 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
         const response = await fetch(`${API_BASE}/api/gallery/${id}`, {
           method: 'DELETE'
         });
-        if (response.ok) {
+        
+        // Always remove from localStorage to handle legacy photos
+        try {
+          const localData = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
+          const updatedLocal = localData.filter(p => p.id !== id);
+          localStorage.setItem('gallery_photos', JSON.stringify(updatedLocal));
+        } catch(e) {}
+
+        if (response.ok || response.status === 404) {
           const updated = galleryPhotos.filter(p => p.id !== id);
           setGalleryPhotos(updated);
         } else {

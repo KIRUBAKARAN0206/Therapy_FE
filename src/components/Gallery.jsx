@@ -151,14 +151,27 @@ export default function Gallery() {
   useEffect(() => {
     const fetchGallery = async () => {
       try {
-        const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-        const response = await fetch(`${apiBase}/api/gallery`);
-        if (response.ok) {
-          const data = await response.json();
-          setCustomPhotos(data);
+        let backendData = [];
+        try {
+          const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+          const response = await fetch(`${apiBase}/api/gallery`);
+          if (response.ok) {
+            backendData = await response.json();
+          }
+        } catch (apiError) {
+          console.error("Backend fetch failed, relying on local storage", apiError);
         }
+
+        // Restore legacy photos from localStorage
+        const localData = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
+        
+        // Merge and deduplicate
+        const allPhotos = [...backendData, ...localData];
+        const uniquePhotos = Array.from(new Map(allPhotos.map(p => [p.id, p])).values());
+        
+        setCustomPhotos(uniquePhotos);
       } catch (e) {
-        console.error("Failed to fetch gallery photos from server", e);
+        console.error("Failed to parse gallery photos", e);
       }
     };
     fetchGallery();
