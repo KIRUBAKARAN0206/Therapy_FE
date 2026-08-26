@@ -7,12 +7,12 @@ import {
 
 
 // Import service banners (retained if needed for service cards, but banner image section is completely removed from the popup modal)
-import sportsRehabImg from '../assets/physio_hero.png';
-import orthopedicRehabImg from '../assets/clinical_rehab.png';
-import postOpImg from '../assets/individualized_therapy.png';
-import neuroImg from '../assets/dedicated_specialists.png';
-import geriatricImg from '../assets/modern_techniques.png';
-import pediatricImg from '../assets/about-clinic.png';
+import sportsRehabImg from '../assets/physio_hero.webp';
+import orthopedicRehabImg from '../assets/clinical_rehab.webp';
+import postOpImg from '../assets/individualized_therapy.webp';
+import neuroImg from '../assets/dedicated_specialists.webp';
+import geriatricImg from '../assets/modern_techniques.webp';
+import pediatricImg from '../assets/about-clinic.webp';
 
 export default function Services() {
   const cardRefs = useRef([]);

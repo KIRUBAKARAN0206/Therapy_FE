@@ -51,6 +51,7 @@ function ImageWithLoader({ src, alt, className, style }) {
         <img
           src={src}
           alt={alt}
+          loading="lazy"
           className={className}
           style={{
             ...style,
@@ -148,14 +149,19 @@ export default function Gallery() {
 
   // Load custom photos and likes
   useEffect(() => {
-    const savedPhotos = localStorage.getItem('clinic_gallery_photos');
-    if (savedPhotos) {
+    const fetchGallery = async () => {
       try {
-        setCustomPhotos(JSON.parse(savedPhotos));
+        const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        const response = await fetch(`${apiBase}/api/gallery`);
+        if (response.ok) {
+          const data = await response.json();
+          setCustomPhotos(data);
+        }
       } catch (e) {
-        console.error("Failed to parse gallery photos", e);
+        console.error("Failed to fetch gallery photos from server", e);
       }
-    }
+    };
+    fetchGallery();
 
     const savedLikes = localStorage.getItem('clinic_gallery_likes');
     if (savedLikes) {

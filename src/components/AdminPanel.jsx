@@ -203,14 +203,18 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
 
   // Gallery Photos useEffect & Handlers
   useEffect(() => {
-    const savedPhotos = localStorage.getItem('clinic_gallery_photos');
-    if (savedPhotos) {
+    const fetchGallery = async () => {
       try {
-        setGalleryPhotos(JSON.parse(savedPhotos));
+        const response = await fetch(`${API_BASE}/api/gallery`);
+        if (response.ok) {
+          const data = await response.json();
+          setGalleryPhotos(data);
+        }
       } catch (e) {
-        console.error("Failed to parse gallery photos", e);
+        console.error("Failed to fetch gallery photos from server", e);
       }
-    }
+    };
+    fetchGallery();
   }, []);
 
   const handlePhotoUpload = (e) => {
@@ -239,92 +243,75 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
     setUploadError('');
 
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = async (event) => {
       const base64Data = event.target.result;
+      
+      let finalDataUrl = base64Data;
 
       if (isImage) {
-        const img = new window.Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const maxDim = 800; // downscale high-res images
-          let width = img.width;
-          let height = img.height;
+        // Compress image using canvas
+        await new Promise((resolve) => {
+          const img = new window.Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const maxDim = 800; // downscale high-res images
+            let width = img.width;
+            let height = img.height;
 
-          if (width > height) {
-            if (width > maxDim) {
-              height = Math.round((height * maxDim) / width);
-              width = maxDim;
+            if (width > height) {
+              if (width > maxDim) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              }
+            } else {
+              if (height > maxDim) {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
             }
-          } else {
-            if (height > maxDim) {
-              width = Math.round((width * maxDim) / height);
-              height = maxDim;
-            }
-          }
 
-          canvas.width = width;
-          canvas.height = height;
+            canvas.width = width;
+            canvas.height = height;
 
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
 
-          // Compress JPEG to 70% quality (avg 30KB) to respect localStorage quota
-          const compressedData = canvas.toDataURL('image/jpeg', 0.7);
-
-          const newPhoto = {
-            id: Date.now().toString(),
-            title: newPhotoTitle.trim() || file.name.split('.')[0],
-            category: resolvedCategory,
-            url: compressedData
+            // Compress WebP to respect database size
+            finalDataUrl = canvas.toDataURL('image/webp', 0.8);
+            resolve();
           };
+          img.src = base64Data;
+        });
+      }
 
-          const updated = [newPhoto, ...galleryPhotos];
-          try {
-            localStorage.setItem('clinic_gallery_photos', JSON.stringify(updated));
-            setGalleryPhotos(updated);
-          } catch (storageError) {
-            console.error("Storage limit exceeded", storageError);
-            setUploadError("Browser storage limit reached. Please remove older photos before uploading new ones.");
-            setIsUploading(false);
-            e.target.value = null;
-            return;
-          }
+      const newPhoto = {
+        id: Date.now().toString(),
+        title: newPhotoTitle.trim() || file.name.split('.')[0],
+        category: resolvedCategory,
+        url: finalDataUrl
+      };
 
+      try {
+        const response = await fetch(`${API_BASE}/api/gallery`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newPhoto)
+        });
+
+        if (response.ok) {
+          setGalleryPhotos(prev => [newPhoto, ...prev]);
           setNewPhotoTitle('');
           setCustomCategoryName('');
           if (newPhotoCategory === '--new--') {
             setNewPhotoCategory(resolvedCategory);
           }
-          setIsUploading(false);
-          e.target.value = null; // Clear file input selection
-        };
-        img.src = base64Data;
-      } else {
-        // Handle Video upload directly without downscaling
-        const newPhoto = {
-          id: Date.now().toString(),
-          title: newPhotoTitle.trim() || file.name.split('.')[0],
-          category: resolvedCategory,
-          url: base64Data
-        };
-
-        const updated = [newPhoto, ...galleryPhotos];
-        try {
-          localStorage.setItem('clinic_gallery_photos', JSON.stringify(updated));
-          setGalleryPhotos(updated);
-        } catch (storageError) {
-          console.error("Storage limit exceeded", storageError);
-          setUploadError("Browser storage limit reached. Please remove older photos or videos before uploading new ones.");
-          setIsUploading(false);
-          e.target.value = null;
-          return;
+        } else {
+          setUploadError("Failed to save to database. File might be too large.");
         }
-
-        setNewPhotoTitle('');
-        setCustomCategoryName('');
-        if (newPhotoCategory === '--new--') {
-          setNewPhotoCategory(resolvedCategory);
-        }
+      } catch (err) {
+        console.error("Upload failed", err);
+        setUploadError("Network error during upload.");
+      } finally {
         setIsUploading(false);
         e.target.value = null; // Clear file input selection
       }
@@ -332,11 +319,22 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
     reader.readAsDataURL(file);
   };
 
-  const deletePhoto = (id) => {
+  const deletePhoto = async (id) => {
     if (window.confirm("Are you sure you want to delete this photo from the gallery?")) {
-      const updated = galleryPhotos.filter(p => p.id !== id);
-      setGalleryPhotos(updated);
-      localStorage.setItem('clinic_gallery_photos', JSON.stringify(updated));
+      try {
+        const response = await fetch(`${API_BASE}/api/gallery/${id}`, {
+          method: 'DELETE'
+        });
+        if (response.ok) {
+          const updated = galleryPhotos.filter(p => p.id !== id);
+          setGalleryPhotos(updated);
+        } else {
+          alert("Failed to delete photo from backend.");
+        }
+      } catch (err) {
+        console.error("Delete failed", err);
+        alert("Network error. Could not delete.");
+      }
     }
   };
 

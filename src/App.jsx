@@ -1,19 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
-import AboutPage from './components/AboutPage';
-import ServicesPage from './components/ServicesPage';
-import ConditionsPage from './components/ConditionsPage';
-import Gallery from './components/Gallery';
-import ContactPage from './components/ContactPage';
-import BookingForm from './components/BookingForm';
-import AdminPanel from './components/AdminPanel';
 import CallCTA from './components/CallCTA';
 import WhatsAppCTA from './components/WhatsAppCTA';
 import Footer from './components/Footer';
-import PrivacyPolicyPage from './components/PrivacyPolicyPage';
-import TermsOfServicePage from './components/TermsOfServicePage';
-import OnlineTherapyPage from './components/OnlineTherapyPage';
+import './App.css';
+
+// Lazy loaded page components
+const AboutPage = lazy(() => import('./components/AboutPage'));
+const ServicesPage = lazy(() => import('./components/ServicesPage'));
+const ConditionsPage = lazy(() => import('./components/ConditionsPage'));
+const Gallery = lazy(() => import('./components/Gallery'));
+const ContactPage = lazy(() => import('./components/ContactPage'));
+const BookingForm = lazy(() => import('./components/BookingForm'));
+const AdminPanel = lazy(() => import('./components/AdminPanel'));
+const PrivacyPolicyPage = lazy(() => import('./components/PrivacyPolicyPage'));
+const TermsOfServicePage = lazy(() => import('./components/TermsOfServicePage'));
+const OnlineTherapyPage = lazy(() => import('./components/OnlineTherapyPage'));
 import './App.css';
 
 export default function App() {
@@ -150,11 +153,28 @@ export default function App() {
     }
   };
 
+    const LoadingFallback = (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '65vh', gap: '20px' }}>
+        <div style={{ 
+          width: '56px', 
+          height: '56px', 
+          borderRadius: '50%',
+          background: 'conic-gradient(from 0deg, var(--primary) 30%, var(--secondary) 100%)',
+          mask: 'radial-gradient(farthest-side, transparent 65%, black 66%)',
+          WebkitMask: 'radial-gradient(farthest-side, transparent 65%, black 66%)',
+          animation: 'spin 1s linear infinite'
+        }}></div>
+        <span style={{ fontSize: '1rem', color: 'var(--primary)', fontWeight: '700', letterSpacing: '0.05em', fontFamily: 'var(--font-heading)' }}>Loading <span className="notranslate">{getIsTamil() ? 'தி தெரபி யூனிவர்ஸ்' : 'THE THERAPY UNIVERSE'}</span>...</span>
+      </div>
+    );
+
   return (
     <>
       <Navbar />
       <main style={{ marginTop: '64px', minHeight: 'calc(100svh - 400px)' }} className={`route-transition ${transitionActive ? 'active' : ''}`}>
-        {renderContent()}
+        <Suspense fallback={LoadingFallback}>
+          {renderContent()}
+        </Suspense>
       </main>
       <Footer />
       <CallCTA />

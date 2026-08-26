@@ -2,11 +2,11 @@ import React, { useEffect, useRef } from 'react';
 import Hero from './Hero';
 import Stats from './Stats';
 import { ArrowRight, Phone, CheckCircle2, Video } from 'lucide-react';
-import therapyImg from '../assets/individualized_therapy.png';
-import techniquesImg from '../assets/modern_techniques.png';
-import specialistsImg from '../assets/dedicated_specialists.png';
-import clinicalRehabImg from '../assets/clinical_rehab.png';
-import onlineTherapyImg from '../assets/online_therapy.png';
+import therapyImg from '../assets/individualized_therapy.webp';
+import techniquesImg from '../assets/modern_techniques.webp';
+import specialistsImg from '../assets/dedicated_specialists.webp';
+import clinicalRehabImg from '../assets/clinical_rehab.webp';
+import onlineTherapyImg from '../assets/online_therapy.webp';
 
 export default function Home({ onNavigate }) {
   const cardRefs = useRef([]);

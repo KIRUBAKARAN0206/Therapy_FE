@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowRight, Star, ShieldCheck, Activity, Users } from 'lucide-react';
-import heroImage from '../assets/physio_hero.png';
+import heroImage from '../assets/physio_hero.webp';
 
 export default function Hero() {
   const styles = {

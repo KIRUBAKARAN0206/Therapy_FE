@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Video, ShieldCheck, Clock, Calendar, CheckCircle2, ChevronDown, HelpCircle, User, Phone, Mail, FileText, ArrowRight, Sparkles, Activity, MapPin, Wifi, Star, MessageCircle, Zap } from 'lucide-react';
-import onlineHeroImg from '../assets/online_consult_clinic.png';
+import onlineHeroImg from '../assets/online_consult_clinic.webp';
 
 export default function OnlineTherapyPage({ onAddBooking }) {
   const heroRef = useRef(null);

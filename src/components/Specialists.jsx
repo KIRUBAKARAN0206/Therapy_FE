@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Award, Target, Sparkles } from 'lucide-react';
-import doctorImg from '../assets/balasurya_avatar.png';
+import doctorImg from '../assets/balasurya_avatar.webp';
 
 export default function Specialists() {
   const containerRef = useRef(null);
