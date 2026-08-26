@@ -210,6 +210,10 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
           const response = await fetch(`${API_BASE}/api/gallery`);
           if (response.ok) {
             backendData = await response.json();
+            backendData = backendData.map(p => ({
+              ...p,
+              url: (p.url && p.url.startsWith('/')) ? `${API_BASE}${p.url}` : p.url
+            }));
           }
         } catch (apiError) {
           console.error("Backend fetch failed, relying on local storage", apiError);
@@ -312,7 +316,12 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
         });
 
         if (response.ok) {
-          setGalleryPhotos(prev => [newPhoto, ...prev]);
+          const data = await response.json();
+          const savedPhoto = data.photo || newPhoto;
+          if (savedPhoto.url && savedPhoto.url.startsWith('/')) {
+            savedPhoto.url = `${API_BASE}${savedPhoto.url}`;
+          }
+          setGalleryPhotos(prev => [savedPhoto, ...prev]);
           setNewPhotoTitle('');
           setCustomCategoryName('');
           if (newPhotoCategory === '--new--') {

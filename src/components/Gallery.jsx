@@ -157,6 +157,10 @@ export default function Gallery() {
           const response = await fetch(`${apiBase}/api/gallery`);
           if (response.ok) {
             backendData = await response.json();
+            backendData = backendData.map(p => ({
+              ...p,
+              url: (p.url && p.url.startsWith('/')) ? `${apiBase}${p.url}` : p.url
+            }));
           }
         } catch (apiError) {
           console.error("Backend fetch failed, relying on local storage", apiError);
