@@ -5,40 +5,40 @@
   --font-heading: 'Outfit', sans-serif;
   --font-body: 'Plus Jakarta Sans', sans-serif;
 
-  /* Luxury Eucalyptus & Champagne Gold Branding Palette */
-  --primary: #045258;          /* Deep Regal Eucalyptus Teal */
-  --primary-hover: #02373b;    /* Darkest Eucalyptus */
-  --primary-glow: rgba(4, 82, 88, 0.12);
-  --secondary: #d97706;        /* Luxury Champagne Gold / Warm Amber */
-  --secondary-hover: #b45309;  /* Rich Warm Bronze Gold */
-  --secondary-glow: rgba(217, 119, 6, 0.15);
-  --accent: #059669;           /* Soothing Emerald Green */
-  --accent-light: #fef3c7;     /* Soft Warm Champagne Accent */
+  /* Deep Healing Eucalyptus & Champagne Gold Palette */
+  --primary: #0d9488;          /* Bright Eucalyptus Aqua Teal */
+  --primary-hover: #14b8a6;    /* Luminous Teal Hover */
+  --primary-glow: rgba(13, 148, 136, 0.2);
+  --secondary: #f59e0b;        /* Sparkling Champagne Gold */
+  --secondary-hover: #d97706;  /* Rich Gold Hover */
+  --secondary-glow: rgba(245, 158, 11, 0.25);
+  --accent: #10b981;           /* Vibrant Emerald */
+  --accent-light: #fef3c7;     
   --success: #10b981;          
 
-  /* Prescription Pad Branding Colors */
-  --primary-bg: #045258;          /* Deep Regal Eucalyptus Teal */
-  --primary-bg-hover: #02373b;    /* Darkest Eucalyptus Hover */
-  --secondary-bg: #d97706;        /* Champagne Gold */
-  --secondary-bg-hover: #b45309;  /* Rich Warm Bronze Hover */
+  /* Button Branding Colors */
+  --primary-bg: #0d9488;          
+  --primary-bg-hover: #0f766e;    
+  --secondary-bg: #f59e0b;        
+  --secondary-bg-hover: #d97706;  
   
-  /* Luxury Soothing Background System */
-  --bg-main: #e2f0ee;          /* Soft rich pastel eucalyptus mint */
-  --bg-card: #f5fbf9;          /* Frosted champagne mint card background */
-  --bg-dark: #032528;          /* Deep eucalyptus dark navy */
-  --text-main: #0c2326;        
-  --text-muted: #436266;       
-  --text-light: #f7fcfa;       
+  /* Rich Deep Colorful Background System (Zero Plain White!) */
+  --bg-main: #032023;          /* Deep Regal Eucalyptus Ocean Navy */
+  --bg-card: linear-gradient(135deg, rgba(6, 52, 57, 0.94) 0%, rgba(9, 72, 79, 0.94) 100%);
+  --bg-dark: #ffffff;          /* White text headings for deep dark background */
+  --text-main: #e2f1ef;        /* Crisp pale mint text for dark background */
+  --text-muted: #a3c9c4;       /* Soft turquoise mint for subtitles */
+  --text-light: #ffffff;       
   
   /* Borders and Dividers */
-  --border-light: rgba(4, 82, 88, 0.16);
-  --border-focus: rgba(217, 119, 6, 0.4);
+  --border-light: rgba(245, 158, 11, 0.25);
+  --border-focus: rgba(245, 158, 11, 0.6);
   
-  /* Shadows with deep teal & golden ambient glow */
-  --shadow-sm: 0 4px 18px rgba(4, 82, 88, 0.07);
-  --shadow-md: 0 16px 38px -4px rgba(4, 82, 88, 0.12), 0 4px 16px -2px rgba(217, 119, 6, 0.08);
-  --shadow-lg: 0 28px 60px -12px rgba(4, 82, 88, 0.16), 0 8px 32px -8px rgba(217, 119, 6, 0.1);
-  --shadow-premium: 0 36px 90px -16px rgba(4, 82, 88, 0.2), 0 0 25px rgba(217, 119, 6, 0.12);
+  /* Shadows with deep glowing ambient colors */
+  --shadow-sm: 0 4px 18px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 16px 40px rgba(0, 0, 0, 0.35), 0 0 20px rgba(245, 158, 11, 0.12);
+  --shadow-lg: 0 28px 60px rgba(0, 0, 0, 0.45), 0 0 30px rgba(13, 148, 136, 0.18);
+  --shadow-premium: 0 36px 90px rgba(0, 0, 0, 0.55), 0 0 35px rgba(245, 158, 11, 0.2);
 
   /* Radius */
   --radius-sm: 10px;
@@ -50,15 +50,15 @@
   --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-smooth: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* Luxury Modern Gradient System */
-  --gradient-primary: linear-gradient(135deg, #045258 0%, #0d9488 50%, #d97706 100%);
-  --gradient-secondary: linear-gradient(135deg, #d97706 0%, #b45309 100%);
-  --gradient-light: linear-gradient(135deg, #daebe7 0%, #ccdeda 50%, #fef3c7 100%);
-  --gradient-light-alt: linear-gradient(135deg, #ccdeda 0%, #e2f0ee 50%, #fde68a 100%);
-  --gradient-dark: linear-gradient(135deg, #032528 0%, #063d42 50%, #1c1917 100%);
-  --gradient-glass: linear-gradient(135deg, rgba(245, 251, 249, 0.96) 0%, rgba(226, 240, 238, 0.88) 100%);
-  --bg-glass: rgba(245, 251, 249, 0.88);
-  --border-glass: rgba(4, 82, 88, 0.2);
+  /* Modern Gradient System */
+  --gradient-primary: linear-gradient(135deg, #0d9488 0%, #059669 50%, #f59e0b 100%);
+  --gradient-secondary: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  --gradient-light: linear-gradient(135deg, #043236 0%, #07474d 50%, #0a565d 100%);
+  --gradient-light-alt: linear-gradient(135deg, #053b40 0%, #084c53 50%, #0c5c64 100%);
+  --gradient-dark: linear-gradient(135deg, #021618 0%, #04272b 100%);
+  --gradient-glass: linear-gradient(135deg, rgba(6, 52, 57, 0.94) 0%, rgba(9, 72, 79, 0.94) 100%);
+  --bg-glass: rgba(6, 52, 57, 0.92);
+  --border-glass: rgba(245, 158, 11, 0.3);
 }
 
 /* Base Styles */
@@ -77,11 +77,11 @@ body {
   font-family: var(--font-body);
   background-color: var(--bg-main);
   background-image: 
-    radial-gradient(at 0% 0%, rgba(4, 82, 88, 0.18) 0px, transparent 55%),
-    radial-gradient(at 100% 0%, rgba(217, 119, 6, 0.12) 0px, transparent 50%),
-    radial-gradient(at 50% 50%, rgba(5, 150, 105, 0.08) 0px, transparent 65%),
-    radial-gradient(at 10% 100%, rgba(217, 119, 6, 0.10) 0px, transparent 50%),
-    radial-gradient(at 90% 100%, rgba(4, 82, 88, 0.16) 0px, transparent 55%);
+    radial-gradient(at 0% 0%, rgba(13, 148, 136, 0.25) 0px, transparent 55%),
+    radial-gradient(at 100% 0%, rgba(245, 158, 11, 0.2) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(16, 185, 129, 0.12) 0px, transparent 65%),
+    radial-gradient(at 10% 100%, rgba(245, 158, 11, 0.18) 0px, transparent 50%),
+    radial-gradient(at 90% 100%, rgba(13, 148, 136, 0.22) 0px, transparent 55%);
   background-attachment: fixed;
   color: var(--text-main);
   line-height: 1.6;
@@ -91,7 +91,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
-  color: var(--bg-dark);
+  color: #ffffff;
   font-weight: 700;
   line-height: 1.25;
 }
@@ -410,20 +410,20 @@ button, input, select, textarea {
   z-index: 999;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   padding: 10px 24px;
-  background: rgba(230, 242, 240, 0.9);
+  background: rgba(3, 32, 35, 0.92);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  border-bottom: 1px solid rgba(4, 82, 88, 0.16);
-  box-shadow: 0 4px 24px rgba(4, 82, 88, 0.06);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.25);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
 }
 
 .header-glass.scrolled {
   padding: 6px 24px;
-  background: rgba(222, 238, 235, 0.96);
+  background: rgba(2, 22, 24, 0.96);
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
-  border-bottom: 1px solid rgba(217, 119, 6, 0.2);
-  box-shadow: 0 8px 30px rgba(4, 82, 88, 0.1);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.4);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
 }
 
 /* Full‑width About Us Hero with background image */
@@ -556,9 +556,9 @@ button, input, select, textarea {
 
 /* Premium Service Cards Design System */
 .services-section {
-  background: linear-gradient(135deg, #d5ece8 0%, #e6f4f2 50%, #d0e8e4 100%);
+  background: linear-gradient(135deg, #032023 0%, #063c42 50%, #042a2e 100%);
   padding: 90px 24px;
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.2);
 }
 
 .services-grid {
@@ -569,11 +569,11 @@ button, input, select, textarea {
 }
 
 .service-card {
-  background: linear-gradient(135deg, rgba(244, 252, 251, 0.96) 0%, rgba(222, 244, 240, 0.96) 100%);
+  background: linear-gradient(135deg, rgba(6, 52, 57, 0.94) 0%, rgba(9, 72, 79, 0.94) 100%);
   padding: 40px;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(8, 105, 114, 0.22);
-  box-shadow: 0 10px 30px rgba(8, 105, 114, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(245, 158, 11, 0.12);
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
               box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
               border-color 0.4s ease;
@@ -869,9 +869,9 @@ button, input, select, textarea {
 
 /* Conditions Page Filter and Cards */
 .conditions-section {
-  background: linear-gradient(135deg, #cbe9e3 0%, #d8eae6 50%, #d0e8e4 100%);
+  background: linear-gradient(135deg, #032023 0%, #063c42 50%, #042a2e 100%);
   padding: 80px 24px;
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.2);
 }
 
 .conditions-container {
@@ -890,28 +890,28 @@ button, input, select, textarea {
 .filter-btn {
   padding: 10px 26px;
   border-radius: 50px; /* Modern premium pill shape */
-  border: 1px solid rgba(8, 105, 114, 0.2);
-  background: linear-gradient(135deg, #f0faf8 0%, #e0f2ef 100%);
-  color: var(--text-main);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  background: rgba(6, 52, 57, 0.8);
+  color: #e2f1ef;
   font-weight: 700;
   font-size: 0.9rem;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(8, 105, 114, 0.06);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .filter-btn:hover {
   transform: translateY(-2px);
-  border-color: var(--primary);
-  color: var(--primary);
-  box-shadow: 0 6px 16px rgba(8, 105, 114, 0.18);
+  border-color: #f59e0b;
+  color: #f59e0b;
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.25);
 }
 
 .filter-btn.active {
-  background: var(--gradient-primary) !important;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
   border-color: transparent !important;
   color: #ffffff !important;
-  box-shadow: var(--shadow-premium) !important;
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4) !important;
 }
 
 .conditions-grid {
@@ -922,11 +922,11 @@ button, input, select, textarea {
 
 .condition-card {
   position: relative;
-  background: linear-gradient(135deg, rgba(244, 252, 251, 0.96) 0%, rgba(222, 244, 240, 0.96) 100%);
+  background: linear-gradient(135deg, rgba(6, 52, 57, 0.94) 0%, rgba(9, 72, 79, 0.94) 100%);
   padding: 36px;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(8, 105, 114, 0.22);
-  box-shadow: 0 10px 30px rgba(8, 105, 114, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(245, 158, 11, 0.12);
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
               box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
               border-color 0.4s ease;
@@ -944,7 +944,7 @@ button, input, select, textarea {
   left: 0;
   width: 100%;
   height: 4px;
-  background: linear-gradient(90deg, var(--secondary-bg) 0%, var(--primary-bg) 100%);
+  background: linear-gradient(90deg, #f59e0b 0%, #0d9488 100%);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -952,8 +952,8 @@ button, input, select, textarea {
 
 .condition-card:hover {
   transform: translateY(-8px) !important;
-  box-shadow: var(--shadow-premium) !important;
-  border-color: rgba(16, 185, 129, 0.2) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), 0 0 30px rgba(245, 158, 11, 0.25) !important;
+  border-color: #f59e0b !important;
 }
 
 .condition-card:hover::before {
@@ -962,18 +962,18 @@ button, input, select, textarea {
 
 .condition-focus-box {
   padding: 16px;
-  background-color: var(--primary-glow);
+  background-color: rgba(245, 158, 11, 0.12);
   border-radius: var(--radius-md);
-  border-left: 4px solid var(--secondary);
+  border-left: 4px solid #f59e0b;
   font-size: 0.85rem;
-  color: var(--text-main);
+  color: #fef3c7;
   margin-top: 24px;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .condition-card:hover .condition-focus-box {
-  background-color: var(--secondary-glow);
-  border-left-color: var(--primary);
+  background-color: rgba(245, 158, 11, 0.2);
+  border-left-color: #fef3c7;
   transform: translateX(4px);
 }
 

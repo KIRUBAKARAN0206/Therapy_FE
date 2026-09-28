@@ -294,10 +294,10 @@ export default function OnlineTherapyPage({ onAddBooking }) {
       marginTop: '80px'
     },
     bookingCard: {
-      backgroundColor: 'var(--bg-card)',
+      background: 'linear-gradient(135deg, rgba(6, 52, 57, 0.95) 0%, rgba(9, 72, 79, 0.95) 100%)',
       borderRadius: 'var(--radius-lg)',
-      boxShadow: 'var(--shadow-premium)',
-      border: '1px solid var(--border-light)',
+      boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5), 0 0 25px rgba(245, 158, 11, 0.15)',
+      border: '1px solid rgba(245, 158, 11, 0.35)',
       padding: '40px',
       position: 'relative',
       overflow: 'hidden'
@@ -311,7 +311,7 @@ export default function OnlineTherapyPage({ onAddBooking }) {
     label: {
       fontSize: '0.85rem',
       fontWeight: '700',
-      color: 'var(--text-main)',
+      color: '#ffffff',
       display: 'flex',
       alignItems: 'center',
       gap: '6px'
@@ -320,16 +320,16 @@ export default function OnlineTherapyPage({ onAddBooking }) {
       position: 'absolute',
       left: '16px',
       top: '41px',
-      color: 'var(--text-muted)'
+      color: 'var(--secondary)'
     },
     input: {
       width: '100%',
       padding: '12px 16px 12px 44px',
       borderRadius: 'var(--radius-sm)',
-      border: '1px solid var(--border-light)',
-      backgroundColor: 'var(--bg-main)',
+      border: '1px solid rgba(245, 158, 11, 0.25)',
+      backgroundColor: 'rgba(3, 32, 35, 0.85)',
       fontSize: '0.95rem',
-      color: 'var(--text-main)',
+      color: '#ffffff',
       transition: 'var(--transition-fast)',
       outline: 'none',
       height: '48px',
@@ -339,10 +339,10 @@ export default function OnlineTherapyPage({ onAddBooking }) {
       width: '100%',
       padding: '12px 16px 12px 44px',
       borderRadius: 'var(--radius-sm)',
-      border: '1px solid var(--border-light)',
-      backgroundColor: 'var(--bg-main)',
+      border: '1px solid rgba(245, 158, 11, 0.25)',
+      backgroundColor: 'rgba(3, 32, 35, 0.85)',
       fontSize: '0.95rem',
-      color: 'var(--text-main)',
+      color: '#ffffff',
       transition: 'var(--transition-fast)',
       outline: 'none',
       minHeight: '100px',
@@ -359,8 +359,8 @@ export default function OnlineTherapyPage({ onAddBooking }) {
       margin: '90px auto 0'
     },
     faqItem: {
-      backgroundColor: '#fff',
-      border: '1px solid var(--border-light)',
+      background: 'linear-gradient(135deg, rgba(6, 52, 57, 0.92) 0%, rgba(9, 72, 79, 0.92) 100%)',
+      border: '1px solid rgba(245, 158, 11, 0.3)',
       borderRadius: 'var(--radius-sm)',
       marginBottom: '16px',
       overflow: 'hidden',
@@ -377,7 +377,7 @@ export default function OnlineTherapyPage({ onAddBooking }) {
     faqQuestion: {
       fontSize: '1.05rem',
       fontWeight: '700',
-      color: 'var(--bg-dark)',
+      color: '#ffffff',
       display: 'flex',
       alignItems: 'center',
       gap: '12px'
@@ -387,7 +387,7 @@ export default function OnlineTherapyPage({ onAddBooking }) {
       fontSize: '0.95rem',
       color: 'var(--text-muted)',
       lineHeight: '1.6',
-      borderTop: '1px solid rgba(79, 70, 229, 0.03)'
+      borderTop: '1px solid rgba(245, 158, 11, 0.15)'
     }
   };
 
@@ -808,9 +808,9 @@ export default function OnlineTherapyPage({ onAddBooking }) {
         }
         .benefit-card-hover:hover {
           transform: translateY(-8px) !important;
-          box-shadow: var(--shadow-premium) !important;
+          box-shadow: 0 20px 40px rgba(13, 148, 136, 0.25) !important;
           border-top-color: var(--secondary) !important;
-          background: #ffffff !important;
+          background: linear-gradient(135deg, rgba(6, 52, 57, 0.95), rgba(13, 148, 136, 0.25)) !important;
         }
 
         /* Process Steps styling */
@@ -820,16 +820,17 @@ export default function OnlineTherapyPage({ onAddBooking }) {
         }
         .step-card-hover:hover {
           transform: translateY(-6px) !important;
-          box-shadow: var(--shadow-premium) !important;
-          border-left-color: var(--primary) !important;
-          border-color: rgba(20, 184, 166, 0.2) !important;
+          box-shadow: 0 15px 35px rgba(245, 158, 11, 0.2) !important;
+          border-left-color: var(--secondary) !important;
+          border-color: rgba(245, 158, 11, 0.4) !important;
+          background: linear-gradient(135deg, rgba(6, 52, 57, 0.95), rgba(6, 60, 66, 0.9)) !important;
         }
 
         /* Form styling */
         .premium-form-container {
-          background: linear-gradient(to bottom, #ffffff, #fbfcfd) !important;
-          box-shadow: 0 20px 45px rgba(15, 23, 42, 0.05) !important;
-          border: 1px solid rgba(226, 232, 240, 0.8) !important;
+          background: linear-gradient(145deg, rgba(6, 52, 57, 0.95) 0%, rgba(3, 32, 35, 0.98) 100%) !important;
+          box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4) !important;
+          border: 1px solid rgba(245, 158, 11, 0.3) !important;
         }
         
         /* Input fields premium interaction */
@@ -838,14 +839,18 @@ export default function OnlineTherapyPage({ onAddBooking }) {
         .online-booking-grid textarea {
           transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
           border-radius: var(--radius-md) !important;
+          background-color: rgba(4, 25, 28, 0.8) !important;
+          color: #e2f1ef !important;
+          border: 1px solid rgba(13, 148, 136, 0.3) !important;
         }
 
         .online-booking-grid input:focus,
         .online-booking-grid select:focus,
         .online-booking-grid textarea:focus {
-          border-color: var(--primary) !important;
-          box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.15) !important;
-          background-color: #ffffff !important;
+          border-color: var(--secondary) !important;
+          box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.25) !important;
+          background-color: rgba(6, 45, 50, 0.95) !important;
+          color: #ffffff !important;
         }
 
         /* FAQ Card hover glow */

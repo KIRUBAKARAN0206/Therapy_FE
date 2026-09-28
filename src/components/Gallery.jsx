@@ -979,9 +979,9 @@ export default function Gallery() {
         }
 
         .toggle-btn.active {
-          background: #ffffff;
-          color: var(--primary);
-          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+          background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+          color: #ffffff;
+          box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
         }
 
         /* 1. Gallery Hero Design */
@@ -1126,9 +1126,9 @@ export default function Gallery() {
           border-radius: 30px;
           font-size: 0.82rem;
           font-weight: 700;
-          border: 1px solid var(--border-light);
-          background: #ffffff;
-          color: var(--text-muted);
+          border: 1px solid rgba(13, 148, 136, 0.3);
+          background: rgba(6, 52, 57, 0.85);
+          color: var(--text-main);
           cursor: pointer;
           transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
           display: inline-flex;
@@ -1309,8 +1309,9 @@ export default function Gallery() {
         .form-group textarea {
           padding: 10px 14px;
           border-radius: var(--radius-sm);
-          border: 1px solid rgba(15, 23, 42, 0.1);
-          background: #ffffff;
+          border: 1px solid rgba(13, 148, 136, 0.3);
+          background: rgba(4, 25, 28, 0.85);
+          color: var(--text-main);
           font-size: 0.9rem;
           outline: none;
           transition: border-color 0.3s ease;
@@ -1558,8 +1559,8 @@ export default function Gallery() {
           flex-direction: column;
           gap: 8px;
           flex-grow: 1;
-          background: #ffffff;
-          border-top: 1px solid var(--border-light);
+          background: linear-gradient(145deg, rgba(6, 52, 57, 0.95), rgba(3, 32, 35, 0.98));
+          border-top: 1px solid rgba(13, 148, 136, 0.3);
         }
 
         .info-title-row {
