@@ -5,40 +5,45 @@
   --font-heading: 'Outfit', sans-serif;
   --font-body: 'Plus Jakarta Sans', sans-serif;
 
-  /* Official Therapy Clinic Branding Palette */
-  --primary: #086972;          /* Deep Eucalyptus Healing Teal */
-  --primary-hover: #054e55;    /* Dark Eucalyptus Teal */
-  --primary-glow: rgba(8, 105, 114, 0.12);
-  --secondary: #0d9488;        /* Refreshing Aqua Mint Teal */
+  /* Aramn Emerald & Gold Therapy Palette (aramn-therapy.vercel.app) */
+  --emerald-dark: #091d17;
+  --emerald-deep: #0d2c23;
+  --emerald-mid: #144034;
+  --emerald-light: #1d5445;
+
+  --primary: #144034;          /* Deep Emerald Therapy Green */
+  --primary-hover: #0d2c23;    /* Dark Emerald */
+  --primary-glow: rgba(20, 64, 52, 0.12);
+  --secondary: #0d9488;        /* Refined Aqua Mint */
   --secondary-hover: #0f766e;  /* Rich Aqua Teal */
   --secondary-glow: rgba(13, 148, 136, 0.14);
-  --accent: #059669;           /* Soothing Emerald Green */
+  --accent: #d4af37;           /* Luxury Gold Accent */
   --accent-light: #dcfce7;     /* Light Mint Accent */
   --success: #10b981;          
 
-  /* Prescription Pad Branding Colors */
-  --primary-bg: #086972;          /* Luminous Dark Teal */
-  --primary-bg-hover: #065158;    /* Dark Teal Hover */
-  --secondary-bg: #14b8a6;        /* Luminous Turquoise Teal */
-  --secondary-bg-hover: #0d9488;  /* Dark Turquoise Hover */
+  /* Branding Background System */
+  --primary-bg: #0d2c23;          /* Deep Emerald */
+  --primary-bg-hover: #091d17;    /* Dark Emerald Hover */
+  --secondary-bg: #144034;        /* Mid Emerald */
+  --secondary-bg-hover: #1d5445;  /* Light Emerald Hover */
   
-  /* Rich Soothing Physical Therapy Background System (No stark white!) */
-  --bg-main: #e8f4f3;          /* Rich therapeutic pastel mint-cyan */
-  --bg-card: #f8faf9;          /* Soft warm frosted mint-card background */
-  --bg-dark: #072e33;          /* Deep eucalyptus slate navy */
-  --text-main: #132a2e;        
-  --text-muted: #4b6b70;       
-  --text-light: #f4fbfb;       
+  /* Healing Sand & Soft Mint Background System */
+  --bg-main: #eef5f3;          /* Soft healing sand-mint background */
+  --bg-card: #f8faf9;          /* Soft frosted mint-card background */
+  --bg-dark: #091d17;          /* Rich Luxury Emerald Dark */
+  --text-main: #142823;        /* Deep Slate Emerald Text */
+  --text-muted: #4a635c;       /* Muted Emerald Slate */
+  --text-light: #f4fbf9;       
   
   /* Borders and Dividers */
-  --border-light: rgba(8, 105, 114, 0.14);
-  --border-focus: rgba(8, 105, 114, 0.35);
+  --border-light: rgba(20, 64, 52, 0.14);
+  --border-focus: rgba(20, 64, 52, 0.35);
   
-  /* Shadows with deep teal ambient glow */
-  --shadow-sm: 0 4px 16px rgba(8, 105, 114, 0.06);
-  --shadow-md: 0 16px 36px -4px rgba(8, 105, 114, 0.1), 0 4px 16px -2px rgba(13, 148, 136, 0.06);
-  --shadow-lg: 0 28px 56px -12px rgba(8, 105, 114, 0.14), 0 8px 30px -8px rgba(13, 148, 136, 0.08);
-  --shadow-premium: 0 32px 80px -16px rgba(8, 105, 114, 0.18), 0 0 2px 1px rgba(13, 148, 136, 0.08);
+  /* Shadows with deep emerald ambient glow */
+  --shadow-sm: 0 4px 16px rgba(9, 29, 23, 0.06);
+  --shadow-md: 0 16px 36px -4px rgba(9, 29, 23, 0.1), 0 4px 16px -2px rgba(20, 64, 52, 0.06);
+  --shadow-lg: 0 28px 56px -12px rgba(9, 29, 23, 0.14), 0 8px 30px -8px rgba(20, 64, 52, 0.08);
+  --shadow-premium: 0 32px 80px -16px rgba(9, 29, 23, 0.18), 0 0 2px 1px rgba(20, 64, 52, 0.08);
 
   /* Radius */
   --radius-sm: 10px;
@@ -50,15 +55,15 @@
   --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-smooth: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* Modern Gradient System for Physical Therapy */
-  --gradient-primary: linear-gradient(135deg, #086972 0%, #0d9488 50%, #059669 100%);
-  --gradient-secondary: linear-gradient(135deg, #0d9488 0%, #0284c7 100%);
-  --gradient-light: linear-gradient(135deg, #e3f2f0 0%, #d5ece8 50%, #e0f2fe 100%);
-  --gradient-light-alt: linear-gradient(135deg, #d5ece8 0%, #e8f4f3 50%, #dcfce7 100%);
-  --gradient-dark: linear-gradient(135deg, #072e33 0%, #0f4c5c 100%);
+  /* Modern Gradient System matching aramn-therapy */
+  --gradient-primary: linear-gradient(135deg, #091d17 0%, #0d2c23 50%, #144034 100%);
+  --gradient-secondary: linear-gradient(135deg, #0d2c23 0%, #1d5445 100%);
+  --gradient-light: linear-gradient(135deg, #eef5f3 0%, #e0ede9 50%, #d5e7e3 100%);
+  --gradient-light-alt: linear-gradient(135deg, #e0ede9 0%, #eef5f3 50%, #dcfce7 100%);
+  --gradient-dark: linear-gradient(135deg, #091d17 0%, #0d2c23 50%, #144034 100%);
   --gradient-glass: linear-gradient(135deg, rgba(248, 250, 249, 0.95) 0%, rgba(232, 244, 243, 0.85) 100%);
   --bg-glass: rgba(248, 250, 249, 0.85);
-  --border-glass: rgba(8, 105, 114, 0.18);
+  --border-glass: rgba(20, 64, 52, 0.18);
 }
 
 /* Base Styles */
@@ -2421,21 +2426,22 @@ body {
   border-color: rgba(79, 70, 229, 0.08);
 }
 
-/* Website Opening Logo Preloader Overlay */
-.initial-preloader-overlay {
+/* Website Opening & Page Route Logo Preloader Overlay */
+.initial-preloader-overlay,
+.page-route-loader-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
   height: 100svh;
-  background: radial-gradient(circle at center, #0f2b26 0%, #081613 100%);
+  background: radial-gradient(circle at center, #0d2c23 0%, #091d17 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 999999;
-  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .initial-preloader-overlay.fade-out {
