@@ -719,6 +719,279 @@ button, input, select, textarea {
   transform: translateX(6px);
 }
 
+/* Custom Card Theme Color Systems for Services Section */
+
+/* 1. Sports Injury Rehabilitation - Mint / Emerald Teal Theme */
+.service-card--sports {
+  background: linear-gradient(135deg, rgba(236, 253, 245, 0.96) 0%, rgba(209, 250, 229, 0.92) 100%);
+  border-color: rgba(16, 185, 129, 0.35);
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.08);
+}
+.service-card--sports::before {
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+}
+.service-card--sports .service-icon-container {
+  background-color: #d1fae5;
+  color: #059669;
+}
+.service-card--sports .service-icon-container svg {
+  color: #059669 !important;
+}
+.service-card--sports:hover {
+  border-color: rgba(16, 185, 129, 0.6);
+  box-shadow: 0 16px 36px rgba(16, 185, 129, 0.22);
+}
+.service-card--sports:hover .service-icon-container {
+  background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
+}
+.service-card--sports .service-checkmark {
+  background-color: #a7f3d0;
+  color: #047857;
+}
+.service-card--sports:hover .service-checkmark {
+  background-color: #059669;
+  color: #ffffff;
+}
+.service-card--sports .service-card-action {
+  color: #059669;
+}
+.service-card--sports:hover .service-card-action {
+  color: #047857;
+}
+.service-card--sports:hover .service-card-title {
+  color: #047857;
+}
+
+/* 2. Orthopedic Rehabilitation - Sky / Royal Blue Theme */
+.service-card--ortho {
+  background: linear-gradient(135deg, rgba(239, 246, 255, 0.96) 0%, rgba(219, 234, 254, 0.92) 100%);
+  border-color: rgba(59, 130, 246, 0.35);
+  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.08);
+}
+.service-card--ortho::before {
+  background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
+}
+.service-card--ortho .service-icon-container {
+  background-color: #dbeafe;
+  color: #2563eb;
+}
+.service-card--ortho .service-icon-container svg {
+  color: #2563eb !important;
+}
+.service-card--ortho:hover {
+  border-color: rgba(59, 130, 246, 0.6);
+  box-shadow: 0 16px 36px rgba(59, 130, 246, 0.22);
+}
+.service-card--ortho:hover .service-icon-container {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.35);
+}
+.service-card--ortho .service-checkmark {
+  background-color: #bfdbfe;
+  color: #1d4ed8;
+}
+.service-card--ortho:hover .service-checkmark {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+.service-card--ortho .service-card-action {
+  color: #2563eb;
+}
+.service-card--ortho:hover .service-card-action {
+  color: #1d4ed8;
+}
+.service-card--ortho:hover .service-card-title {
+  color: #1e40af;
+}
+
+/* 3. Post-Operative Recovery - Indigo / Cobalt Theme */
+.service-card--postop {
+  background: linear-gradient(135deg, rgba(238, 242, 255, 0.96) 0%, rgba(224, 231, 255, 0.92) 100%);
+  border-color: rgba(99, 102, 241, 0.35);
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.08);
+}
+.service-card--postop::before {
+  background: linear-gradient(90deg, #6366f1 0%, #4338ca 100%);
+}
+.service-card--postop .service-icon-container {
+  background-color: #e0e7ff;
+  color: #4f46e5;
+}
+.service-card--postop .service-icon-container svg {
+  color: #4f46e5 !important;
+}
+.service-card--postop:hover {
+  border-color: rgba(99, 102, 241, 0.6);
+  box-shadow: 0 16px 36px rgba(99, 102, 241, 0.22);
+}
+.service-card--postop:hover .service-icon-container {
+  background: linear-gradient(135deg, #6366f1 0%, #3730a3 100%);
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.35);
+}
+.service-card--postop .service-checkmark {
+  background-color: #c7d2fe;
+  color: #3730a3;
+}
+.service-card--postop:hover .service-checkmark {
+  background-color: #4f46e5;
+  color: #ffffff;
+}
+.service-card--postop .service-card-action {
+  color: #4f46e5;
+}
+.service-card--postop:hover .service-card-action {
+  color: #3730a3;
+}
+.service-card--postop:hover .service-card-title {
+  color: #312e81;
+}
+
+/* 4. Neurological Physiotherapy - Purple / Amethyst Theme */
+.service-card--neuro {
+  background: linear-gradient(135deg, rgba(245, 243, 255, 0.96) 0%, rgba(237, 233, 254, 0.92) 100%);
+  border-color: rgba(139, 92, 246, 0.35);
+  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.08);
+}
+.service-card--neuro::before {
+  background: linear-gradient(90deg, #8b5cf6 0%, #6d28d9 100%);
+}
+.service-card--neuro .service-icon-container {
+  background-color: #ede9fe;
+  color: #7c3aed;
+}
+.service-card--neuro .service-icon-container svg {
+  color: #7c3aed !important;
+}
+.service-card--neuro:hover {
+  border-color: rgba(139, 92, 246, 0.6);
+  box-shadow: 0 16px 36px rgba(139, 92, 246, 0.22);
+}
+.service-card--neuro:hover .service-icon-container {
+  background: linear-gradient(135deg, #8b5cf6 0%, #5b21b6 100%);
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.35);
+}
+.service-card--neuro .service-checkmark {
+  background-color: #ddd6fe;
+  color: #6d28d9;
+}
+.service-card--neuro:hover .service-checkmark {
+  background-color: #7c3aed;
+  color: #ffffff;
+}
+.service-card--neuro .service-card-action {
+  color: #7c3aed;
+}
+.service-card--neuro:hover .service-card-action {
+  color: #6d28d9;
+}
+.service-card--neuro:hover .service-card-title {
+  color: #4c1d95;
+}
+
+/* 5. Geriatric Mobility & Strength - Warm Amber / Sunset Gold Theme */
+.service-card--geriatric {
+  background: linear-gradient(135deg, rgba(254, 243, 199, 0.85) 0%, rgba(253, 230, 138, 0.75) 100%);
+  border-color: rgba(245, 158, 11, 0.4);
+  box-shadow: 0 10px 30px rgba(245, 158, 11, 0.1);
+}
+.service-card--geriatric::before {
+  background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+}
+.service-card--geriatric .service-icon-container {
+  background-color: #fde68a;
+  color: #d97706;
+}
+.service-card--geriatric .service-icon-container svg {
+  color: #d97706 !important;
+}
+.service-card--geriatric:hover {
+  border-color: rgba(245, 158, 11, 0.65);
+  box-shadow: 0 16px 36px rgba(245, 158, 11, 0.25);
+}
+.service-card--geriatric:hover .service-icon-container {
+  background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.35);
+}
+.service-card--geriatric .service-checkmark {
+  background-color: #fef08a;
+  color: #b45309;
+}
+.service-card--geriatric:hover .service-checkmark {
+  background-color: #d97706;
+  color: #ffffff;
+}
+.service-card--geriatric .service-card-action {
+  color: #d97706;
+}
+.service-card--geriatric:hover .service-card-action {
+  color: #b45309;
+}
+.service-card--geriatric:hover .service-card-title {
+  color: #78350f;
+}
+
+/* 6. Pediatric Physical Therapy - Rose Coral / Pink Theme */
+.service-card--pediatric {
+  background: linear-gradient(135deg, rgba(255, 228, 230, 0.9) 0%, rgba(254, 205, 211, 0.82) 100%);
+  border-color: rgba(244, 63, 94, 0.35);
+  box-shadow: 0 10px 30px rgba(244, 63, 94, 0.08);
+}
+.service-card--pediatric::before {
+  background: linear-gradient(90deg, #f43f5e 0%, #be123c 100%);
+}
+.service-card--pediatric .service-icon-container {
+  background-color: #fecdd3;
+  color: #e11d48;
+}
+.service-card--pediatric .service-icon-container svg {
+  color: #e11d48 !important;
+}
+.service-card--pediatric:hover {
+  border-color: rgba(244, 63, 94, 0.6);
+  box-shadow: 0 16px 36px rgba(244, 63, 94, 0.22);
+}
+.service-card--pediatric:hover .service-icon-container {
+  background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%);
+  box-shadow: 0 8px 20px rgba(244, 63, 94, 0.35);
+}
+.service-card--pediatric .service-checkmark {
+  background-color: #ffe4e6;
+  color: #be123c;
+}
+.service-card--pediatric:hover .service-checkmark {
+  background-color: #e11d48;
+  color: #ffffff;
+}
+.service-card--pediatric .service-card-action {
+  color: #e11d48;
+}
+.service-card--pediatric:hover .service-card-action {
+  color: #be123c;
+}
+.service-card--pediatric:hover .service-card-title {
+  color: #881337;
+}
+
+/* Modal header icon wraps by theme */
+.modal-header-icon-wrap.service-card--sports { background-color: #d1fae5; }
+.modal-header-icon-wrap.service-card--sports svg { color: #059669 !important; }
+
+.modal-header-icon-wrap.service-card--ortho { background-color: #dbeafe; }
+.modal-header-icon-wrap.service-card--ortho svg { color: #2563eb !important; }
+
+.modal-header-icon-wrap.service-card--postop { background-color: #e0e7ff; }
+.modal-header-icon-wrap.service-card--postop svg { color: #4f46e5 !important; }
+
+.modal-header-icon-wrap.service-card--neuro { background-color: #ede9fe; }
+.modal-header-icon-wrap.service-card--neuro svg { color: #7c3aed !important; }
+
+.modal-header-icon-wrap.service-card--geriatric { background-color: #fde68a; }
+.modal-header-icon-wrap.service-card--geriatric svg { color: #d97706 !important; }
+
+.modal-header-icon-wrap.service-card--pediatric { background-color: #fecdd3; }
+.modal-header-icon-wrap.service-card--pediatric svg { color: #e11d48 !important; }
+
 /* Staggered Cards Reveal Animation */
 .reveal-card {
   opacity: 0;

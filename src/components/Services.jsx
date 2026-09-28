@@ -84,7 +84,8 @@ export default function Services() {
 
   const services = [
     {
-      icon: <ShieldAlert size={28} color="var(--primary)" />,
+      themeClass: "service-card--sports",
+      icon: <ShieldAlert size={28} />,
       title: "Sports Injury Rehabilitation",
       image: sportsRehabImg,
       desc: "Comprehensive rehabilitation plans designed specifically for athletes. We treat muscle tears, ligament strains, sprains, and prepare you to return safely to peak performance.",
@@ -111,7 +112,8 @@ export default function Services() {
       ]
     },
     {
-      icon: <Activity size={28} color="var(--primary)" />,
+      themeClass: "service-card--ortho",
+      icon: <Activity size={28} />,
       title: "Orthopedic Rehabilitation",
       image: orthopedicRehabImg,
       desc: "Therapy focusing on restoring functions of the musculoskeletal system, including joints, bones, ligaments, tendons, and muscles affected by orthopedic ailments.",
@@ -137,7 +139,8 @@ export default function Services() {
       ]
     },
     {
-      icon: <RefreshCw size={28} color="var(--primary)" />,
+      themeClass: "service-card--postop",
+      icon: <RefreshCw size={28} />,
       title: "Post-Operative Recovery",
       image: postOpImg,
       desc: "Assisting patients in recovering full range of motion, muscle strength, and confidence after undergoing joint replacements, fracture repairs, or reconstructive surgeries.",
@@ -162,7 +165,8 @@ export default function Services() {
       ]
     },
     {
-      icon: <Cpu size={28} color="var(--primary)" />,
+      themeClass: "service-card--neuro",
+      icon: <Cpu size={28} />,
       title: "Neurological Physiotherapy",
       image: neuroImg,
       desc: "Specialized rehabilitation for individuals with physical impairments arising from neurological or neuromuscular disorders to maximize motor function.",
@@ -187,7 +191,8 @@ export default function Services() {
       ]
     },
     {
-      icon: <Sparkles size={28} color="var(--primary)" />,
+      themeClass: "service-card--geriatric",
+      icon: <Sparkles size={28} />,
       title: "Geriatric Mobility & Strength",
       image: geriatricImg,
       desc: "Custom therapies aimed at seniors to help build strength, confidence, and maintain independent living while preventing falls and managing aging-related pain.",
@@ -212,7 +217,8 @@ export default function Services() {
       ]
     },
     {
-      icon: <Heart size={28} color="var(--primary)" />,
+      themeClass: "service-card--pediatric",
+      icon: <Heart size={28} />,
       title: "Pediatric Physical Therapy",
       image: pediatricImg,
       desc: "Developmental physical therapy for infants, toddlers, and adolescents to help them reach milestones, build strength, and restore movement patterns.",
@@ -254,7 +260,7 @@ export default function Services() {
             <div 
               key={index} 
               ref={el => cardRefs.current[index] = el}
-              className="service-card reveal-card"
+              className={`service-card reveal-card ${service.themeClass || ''}`}
               style={{ transitionDelay: `${index * 80}ms` }}
               onClick={() => openModal(service)}
             >
@@ -314,7 +320,7 @@ export default function Services() {
 
               {/* Content-focused Clean Header (No banner images) */}
               <div className="modal-header-clean">
-                <div className="modal-header-icon-wrap">
+                <div className={`modal-header-icon-wrap ${activeService.themeClass || ''}`}>
                   {activeService.icon}
                 </div>
                 <div className="modal-header-text-wrap">
