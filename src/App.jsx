@@ -188,7 +188,7 @@ export default function App() {
       )}
 
       <Navbar />
-      <main style={{ marginTop: '64px', minHeight: 'calc(100svh - 400px)' }} className={`route-transition ${transitionActive ? 'active' : ''}`}>
+      <main style={{ marginTop: '72px', minHeight: 'calc(100svh - 400px)' }} className={`route-transition ${transitionActive ? 'active' : ''}`}>
         <Suspense fallback={<LoadingLogoSpinner />}>
           {renderContent()}
         </Suspense>

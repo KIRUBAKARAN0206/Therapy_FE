@@ -426,16 +426,46 @@ button, input, select, textarea {
   transform-origin: left;
 }
 
+/* Prevent Google Translate from shifting body down & breaking fixed header layout */
+body {
+  top: 0px !important;
+  position: static !important;
+}
+
+iframe.goog-te-banner-frame,
+.goog-te-banner-frame,
+.skiptranslate,
+#goog-gt-tt,
+.goog-te-spinner-pos {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+body > .skiptranslate {
+  display: none !important;
+}
+
+.goog-text-highlight {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
 /* Glassmorphic Navbar Container */
 .header-glass {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 999;
-  transition: padding 0.3s ease, background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-  padding: 10px 24px;
-  background: rgba(255, 255, 255, 0.85);
+  height: 72px;
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+  transition: padding 0.3s ease, background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, height 0.3s ease;
+  padding: 0 24px;
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.5);
@@ -443,8 +473,9 @@ button, input, select, textarea {
 }
 
 .header-glass.scrolled {
-  padding: 6px 24px;
-  background: rgba(255, 255, 255, 0.95);
+  height: 64px;
+  padding: 0 24px;
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(20, 184, 166, 0.15);
