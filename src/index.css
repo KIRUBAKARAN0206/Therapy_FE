@@ -1796,3 +1796,100 @@ body {
   border-color: rgba(79, 70, 229, 0.08);
 }
 
+/* Website Opening Logo Preloader Overlay */
+.initial-preloader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100svh;
+  background: radial-gradient(circle at center, #0f2b26 0%, #081613 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.initial-preloader-overlay.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.preloader-logo-container {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.preloader-ring-outer {
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: #14b8a6;
+  border-right-color: #84cc16;
+  border-bottom-color: #0f766e;
+  animation: spin 1.4s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+}
+
+.preloader-ring-glow {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(20, 184, 166, 0.25) 0%, transparent 75%);
+  animation: pulseGlow 1.8s ease-in-out infinite;
+}
+
+.preloader-logo-img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  border-radius: 50%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(20, 184, 166, 0.4);
+  animation: logoPulse 2s ease-in-out infinite;
+}
+
+.preloader-title {
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.1em;
+  margin: 0;
+  text-align: center;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #ffffff 30%, #84cc16 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.preloader-subtitle {
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #94a3b8;
+  letter-spacing: 0.22em;
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+
+@keyframes logoPulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 10px rgba(132, 204, 22, 0.3));
+  }
+  50% {
+    transform: scale(1.06);
+    filter: drop-shadow(0 0 25px rgba(20, 184, 166, 0.6));
+  }
+}
+
+

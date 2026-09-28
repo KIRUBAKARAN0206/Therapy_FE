@@ -4,6 +4,7 @@ import Home from './components/Home';
 import CallCTA from './components/CallCTA';
 import WhatsAppCTA from './components/WhatsAppCTA';
 import Footer from './components/Footer';
+import logoImg from './assets/logo.webp';
 import './App.css';
 
 // Lazy loaded page components
@@ -17,7 +18,6 @@ const AdminPanel = lazy(() => import('./components/AdminPanel'));
 const PrivacyPolicyPage = lazy(() => import('./components/PrivacyPolicyPage'));
 const TermsOfServicePage = lazy(() => import('./components/TermsOfServicePage'));
 const OnlineTherapyPage = lazy(() => import('./components/OnlineTherapyPage'));
-import './App.css';
 
 export default function App() {
   const getIsTamil = () => {
@@ -34,8 +34,26 @@ export default function App() {
   const [currentHash, setCurrentHash] = useState(window.location.hash || '#/');
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [preloaderFading, setPreloaderFading] = useState(false);
 
   const [transitionActive, setTransitionActive] = useState(false);
+
+  // Initial site load preloader timer
+  useEffect(() => {
+    const fadeTimer = setTimeout(() => {
+      setPreloaderFading(true);
+    }, 1200);
+
+    const hideTimer = setTimeout(() => {
+      setInitialLoading(false);
+    }, 1700);
+
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(hideTimer);
+    };
+  }, []);
 
   // Load bookings from database on mount (fallback to localStorage if server is offline)
   useEffect(() => {
@@ -106,22 +124,22 @@ export default function App() {
     window.location.hash = `#/${path}`;
   };
 
+  const LoadingLogoSpinner = () => (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '65vh', gap: '20px' }}>
+      <div className="preloader-logo-container" style={{ width: '100px', height: '100px', marginBottom: 0 }}>
+        <div className="preloader-ring-outer" style={{ inset: '-8px' }}></div>
+        <div className="preloader-ring-glow"></div>
+        <img src={logoImg} alt="THE THERAPY UNIVERSE Logo" className="preloader-logo-img" style={{ width: '84px', height: '84px' }} />
+      </div>
+      <span style={{ fontSize: '0.95rem', color: 'var(--primary)', fontWeight: '700', letterSpacing: '0.06em', fontFamily: 'var(--font-heading)' }}>
+        Loading <span className="notranslate">{getIsTamil() ? 'தி தெரபி யூனிவர்ஸ்' : 'THE THERAPY UNIVERSE'}</span>...
+      </span>
+    </div>
+  );
+
   const renderContent = () => {
     if (loading) {
-      return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '65vh', gap: '20px' }}>
-          <div style={{ 
-            width: '56px', 
-            height: '56px', 
-            borderRadius: '50%',
-            background: 'conic-gradient(from 0deg, var(--primary) 30%, var(--secondary) 100%)',
-            mask: 'radial-gradient(farthest-side, transparent 65%, black 66%)',
-            WebkitMask: 'radial-gradient(farthest-side, transparent 65%, black 66%)',
-            animation: 'spin 1s linear infinite'
-          }}></div>
-          <span style={{ fontSize: '1rem', color: 'var(--primary)', fontWeight: '700', letterSpacing: '0.05em', fontFamily: 'var(--font-heading)' }}>Loading <span className="notranslate">{getIsTamil() ? 'தி தெரபி யூனிவர்ஸ்' : 'THE THERAPY UNIVERSE'}</span>...</span>
-        </div>
-      );
+      return <LoadingLogoSpinner />;
     }
 
     switch (currentHash) {
@@ -153,26 +171,26 @@ export default function App() {
     }
   };
 
-    const LoadingFallback = (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '65vh', gap: '20px' }}>
-        <div style={{ 
-          width: '56px', 
-          height: '56px', 
-          borderRadius: '50%',
-          background: 'conic-gradient(from 0deg, var(--primary) 30%, var(--secondary) 100%)',
-          mask: 'radial-gradient(farthest-side, transparent 65%, black 66%)',
-          WebkitMask: 'radial-gradient(farthest-side, transparent 65%, black 66%)',
-          animation: 'spin 1s linear infinite'
-        }}></div>
-        <span style={{ fontSize: '1rem', color: 'var(--primary)', fontWeight: '700', letterSpacing: '0.05em', fontFamily: 'var(--font-heading)' }}>Loading <span className="notranslate">{getIsTamil() ? 'தி தெரபி யூனிவர்ஸ்' : 'THE THERAPY UNIVERSE'}</span>...</span>
-      </div>
-    );
-
   return (
     <>
+      {/* Website Opening Splash Preloader with Official Clinic Logo */}
+      {initialLoading && (
+        <div className={`initial-preloader-overlay ${preloaderFading ? 'fade-out' : ''}`}>
+          <div className="preloader-logo-container">
+            <div className="preloader-ring-outer"></div>
+            <div className="preloader-ring-glow"></div>
+            <img src={logoImg} alt="THE THERAPY UNIVERSE Logo" className="preloader-logo-img" />
+          </div>
+          <h1 className="preloader-title notranslate">
+            {getIsTamil() ? 'தி தெரபி யூனிவர்ஸ்' : 'THE THERAPY UNIVERSE'}
+          </h1>
+          <p className="preloader-subtitle">PHYSIO HEALTH CENTRE</p>
+        </div>
+      )}
+
       <Navbar />
       <main style={{ marginTop: '64px', minHeight: 'calc(100svh - 400px)' }} className={`route-transition ${transitionActive ? 'active' : ''}`}>
-        <Suspense fallback={LoadingFallback}>
+        <Suspense fallback={<LoadingLogoSpinner />}>
           {renderContent()}
         </Suspense>
       </main>
@@ -182,3 +200,4 @@ export default function App() {
     </>
   );
 }
+
