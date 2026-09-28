@@ -80,10 +80,10 @@ export default function About() {
     valueCard: {
       padding: '30px 24px',
       borderRadius: 'var(--radius-lg)',
-      background: 'rgba(255, 255, 255, 0.75)',
+      background: 'linear-gradient(135deg, rgba(238, 248, 246, 0.95) 0%, rgba(220, 242, 238, 0.95) 100%)',
       backdropFilter: 'blur(16px)',
       WebkitBackdropFilter: 'blur(16px)',
-      border: '1px solid rgba(255, 255, 255, 0.6)',
+      border: '1px solid rgba(8, 105, 114, 0.18)',
       boxShadow: 'var(--shadow-sm)',
       transition: 'var(--transition-smooth)',
       display: 'flex',
@@ -103,11 +103,11 @@ export default function About() {
     },
     rightSide: {
       padding: '28px',
-      background: 'rgba(255, 255, 255, 0.75)',
+      background: 'linear-gradient(135deg, rgba(235, 246, 244, 0.96) 0%, rgba(215, 240, 235, 0.96) 100%)',
       backdropFilter: 'blur(20px)',
       WebkitBackdropFilter: 'blur(20px)',
       borderRadius: 'var(--radius-lg)',
-      border: '1px solid rgba(255, 255, 255, 0.9)',
+      border: '1px solid rgba(8, 105, 114, 0.25)',
       boxShadow: 'var(--shadow-premium)',
       display: 'flex',
       flexDirection: 'column',
@@ -349,8 +349,8 @@ export default function About() {
         .about-value-card:hover {
           transform: translateY(-8px) !important;
           box-shadow: var(--shadow-premium) !important;
-          border-color: rgba(8, 105, 114, 0.35) !important;
-          background-color: #ffffff !important;
+          border-color: rgba(8, 105, 114, 0.45) !important;
+          background-color: #dcf2ee !important;
         }
 
         .value-icon-container {

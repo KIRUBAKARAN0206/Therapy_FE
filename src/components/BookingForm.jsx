@@ -123,16 +123,16 @@ export default function BookingForm({ onAddBooking }) {
 
   const styles = {
     section: {
-      backgroundColor: 'var(--bg-main)',
+      background: 'linear-gradient(135deg, #d2ece8 0%, #e5f4f1 50%, #cceae5 100%)',
       padding: '80px 24px 120px'
     },
     card: {
       maxWidth: '850px',
       margin: '0 auto',
-      backgroundColor: 'var(--bg-card)',
+      background: 'linear-gradient(135deg, rgba(244, 252, 251, 0.96) 0%, rgba(222, 244, 240, 0.96) 100%)',
       borderRadius: 'var(--radius-lg)',
-      boxShadow: 'var(--shadow-premium)',
-      border: '1px solid var(--border-light)',
+      boxShadow: '0 20px 60px rgba(8, 105, 114, 0.12)',
+      border: '1px solid rgba(8, 105, 114, 0.25)',
       padding: '48px',
       position: 'relative',
       overflow: 'hidden'
@@ -161,14 +161,14 @@ export default function BookingForm({ onAddBooking }) {
       position: 'absolute',
       left: '16px',
       top: '45px',
-      color: 'var(--text-muted)'
+      color: 'var(--primary)'
     },
     input: {
       width: '100%',
       padding: '14px 16px 14px 44px',
       borderRadius: 'var(--radius-sm)',
-      border: '1px solid var(--border-light)',
-      backgroundColor: 'var(--bg-main)',
+      border: '1px solid rgba(8, 105, 114, 0.2)',
+      backgroundColor: 'rgba(255, 255, 255, 0.85)',
       fontSize: '0.95rem',
       color: 'var(--text-main)',
       transition: 'var(--transition-fast)',
@@ -180,8 +180,8 @@ export default function BookingForm({ onAddBooking }) {
       width: '100%',
       padding: '14px 16px 14px 44px',
       borderRadius: 'var(--radius-sm)',
-      border: '1px solid var(--border-light)',
-      backgroundColor: 'var(--bg-main)',
+      border: '1px solid rgba(8, 105, 114, 0.2)',
+      backgroundColor: 'rgba(255, 255, 255, 0.85)',
       fontSize: '0.95rem',
       color: 'var(--text-main)',
       transition: 'var(--transition-fast)',

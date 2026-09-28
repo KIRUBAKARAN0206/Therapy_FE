@@ -876,8 +876,8 @@ export default function Gallery() {
 
         .folder-card {
           position: relative;
-          background: #ffffff;
-          border: 1px solid var(--border-light);
+          background: linear-gradient(135deg, rgba(240, 249, 248, 0.96) 0%, rgba(222, 243, 239, 0.96) 100%);
+          border: 1px solid rgba(8, 105, 114, 0.18);
           border-radius: var(--radius-lg);
           height: 350px;
           display: flex;
@@ -895,9 +895,9 @@ export default function Gallery() {
           left: 20px;
           width: 80px;
           height: 15px;
-          background: #f8fafc;
+          background: #d8efe9;
           border-radius: 10px 10px 0 0;
-          border: 1px solid var(--border-light);
+          border: 1px solid rgba(8, 105, 114, 0.18);
           border-bottom: none;
           transform: translateY(-100%);
           transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -907,12 +907,12 @@ export default function Gallery() {
         .folder-card:hover {
           transform: translateY(-8px) rotateX(2deg);
           box-shadow: var(--shadow-premium);
-          border-color: rgba(20, 184, 166, 0.4);
+          border-color: rgba(8, 105, 114, 0.45);
         }
 
         .folder-card:hover::before {
-          background: #ffffff;
-          border-color: rgba(20, 184, 166, 0.4);
+          background: #cbe9e3;
+          border-color: rgba(8, 105, 114, 0.45);
         }
 
         .folder-cover-img-container {
@@ -920,7 +920,7 @@ export default function Gallery() {
           width: 100%;
           height: 170px;
           overflow: hidden;
-          background-color: #f1f5f9;
+          background-color: #cbe9e3;
         }
 
         .folder-cover-img {
@@ -940,7 +940,7 @@ export default function Gallery() {
           flex-direction: column;
           gap: 6px;
           flex-grow: 1;
-          background: #ffffff;
+          background: linear-gradient(135deg, rgba(238, 248, 246, 0.98) 0%, rgba(220, 242, 238, 0.98) 100%);
         }
 
         .folder-details h3 {

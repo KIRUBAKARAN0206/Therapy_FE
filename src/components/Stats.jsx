@@ -91,10 +91,10 @@ export default function Stats() {
       zIndex: 2
     },
     card: {
-      background: 'rgba(255, 255, 255, 0.8)',
+      background: 'linear-gradient(135deg, rgba(235, 246, 244, 0.94) 0%, rgba(218, 242, 237, 0.94) 100%)',
       backdropFilter: 'blur(16px)',
       WebkitBackdropFilter: 'blur(16px)',
-      border: '1px solid rgba(30, 64, 175, 0.05)',
+      border: '1px solid rgba(8, 105, 114, 0.18)',
       padding: '32px 24px',
       borderRadius: 'var(--radius-lg)',
       boxShadow: 'var(--shadow-md)',
