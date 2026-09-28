@@ -20,8 +20,7 @@ body {
 .stat-card,
 .btn-primary,
 .btn-secondary,
-.footer-main,
-.header-glass {
+.footer-main {
   transform: translateZ(0);
   backface-visibility: hidden;
 }
@@ -434,22 +433,22 @@ button, input, select, textarea {
   left: 0;
   width: 100%;
   z-index: 999;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: padding 0.3s ease, background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
   padding: 10px 24px;
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
 .header-glass.scrolled {
   padding: 6px 24px;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-  border-bottom: 1px solid rgba(30, 64, 175, 0.08);
-  box-shadow: var(--shadow-sm);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(20, 184, 166, 0.15);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
 }
 
 /* Full‑width About Us Hero with background image */
