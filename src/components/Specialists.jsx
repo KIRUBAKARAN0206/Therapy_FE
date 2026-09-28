@@ -106,7 +106,7 @@ export default function Specialists() {
 
                 <div className="speciality-section">
                   <h4 className="speciality-heading">
-                    <Target size={16} style={{ color: '#9ecc14', marginRight: '8px' }} />
+                    <Target size={16} style={{ color: '#159A9C', marginRight: '8px' }} />
                     Core Areas of Expertise
                   </h4>
                   <div className="speciality-badges-grid">
@@ -193,7 +193,7 @@ export default function Specialists() {
           padding: 8px 18px;
           border-radius: 50px;
           background-color: rgba(158, 204, 20, 0.15);
-          color: #9ecc14;
+          color: #159A9C;
           font-weight: 700;
           font-size: 0.85rem;
           letter-spacing: 0.05em;
@@ -250,7 +250,7 @@ export default function Specialists() {
 
         .specialist-showcase-card:hover {
           transform: translateY(-8px);
-          border-color: #9ecc14;
+          border-color: #159A9C;
           box-shadow: 0 50px 110px -25px rgba(2, 20, 22, 0.95), 0 0 35px rgba(158, 204, 20, 0.25);
         }
 
@@ -302,7 +302,7 @@ export default function Specialists() {
           position: absolute;
           inset: -6px;
           border-radius: 50%;
-          background: linear-gradient(135deg, #086972 0%, #9ecc14 100%);
+          background: linear-gradient(135deg, #086972 0%, #159A9C 100%);
           z-index: 0;
           opacity: 0.85;
           transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
@@ -340,7 +340,7 @@ export default function Specialists() {
           bottom: 12px;
           left: 50%;
           transform: translateX(-50%);
-          background: linear-gradient(135deg, #086972 0%, #9ecc14 100%);
+          background: linear-gradient(135deg, #086972 0%, #159A9C 100%);
           color: #ffffff;
           padding: 6px 14px;
           border-radius: 50px;
@@ -371,7 +371,7 @@ export default function Specialists() {
 
         .specialist-showcase-card:hover .doctor-stat-item {
           background: rgba(158, 204, 20, 0.12);
-          border-color: #9ecc14;
+          border-color: #159A9C;
           transform: translateY(-3px);
           box-shadow: 0 8px 24px rgba(158, 204, 20, 0.12);
         }
@@ -380,7 +380,7 @@ export default function Specialists() {
           display: block;
           font-size: 1.6rem;
           font-weight: 850;
-          color: #9ecc14;
+          color: #159A9C;
           font-family: var(--font-heading);
           margin-bottom: 2px;
         }
@@ -407,7 +407,7 @@ export default function Specialists() {
         .doctor-role-tag {
           font-size: 0.85rem;
           font-weight: 750;
-          color: #9ecc14;
+          color: #159A9C;
           text-transform: uppercase;
           letter-spacing: 0.05em;
           display: block;
@@ -471,10 +471,10 @@ export default function Specialists() {
           width: 8px;
           height: 8px;
           border-radius: 50%;
-          background-color: #9ecc14;
+          background-color: #159A9C;
           margin-top: 6px;
           flex-shrink: 0;
-          box-shadow: 0 0 10px #9ecc14;
+          box-shadow: 0 0 10px #159A9C;
         }
 
         .speciality-title-text {
@@ -495,7 +495,7 @@ export default function Specialists() {
         .doctor-quote-box {
           position: relative;
           background: rgba(158, 204, 20, 0.04); /* Tinted with brand lime */
-          border-left: 4px solid #9ecc14;
+          border-left: 4px solid #159A9C;
           padding: 20px 24px;
           border-radius: 0 var(--radius-md) var(--radius-md) 0;
           margin-bottom: 32px;
