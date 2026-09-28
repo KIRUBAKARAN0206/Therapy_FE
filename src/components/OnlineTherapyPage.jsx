@@ -224,11 +224,11 @@ export default function OnlineTherapyPage({ onAddBooking }) {
       marginTop: '40px'
     },
     benefitCard: {
-      backgroundColor: '#fff',
-      border: '1px solid var(--border-light)',
+      background: 'linear-gradient(135deg, rgba(244, 252, 251, 0.96) 0%, rgba(222, 244, 240, 0.96) 100%)',
+      border: '1px solid rgba(8, 105, 114, 0.18)',
       borderRadius: 'var(--radius-md)',
       padding: '32px 24px',
-      boxShadow: 'var(--shadow-sm)',
+      boxShadow: '0 8px 24px rgba(8, 105, 114, 0.06)',
       display: 'flex',
       flexDirection: 'column',
       gap: '16px',
@@ -237,9 +237,9 @@ export default function OnlineTherapyPage({ onAddBooking }) {
     stepsContainer: {
       marginTop: '80px',
       padding: '80px 24px',
-      background: 'var(--gradient-light-alt)',
+      background: 'linear-gradient(135deg, #d2ece8 0%, #e6f4f2 50%, #cceae5 100%)',
       borderRadius: 'var(--radius-lg)',
-      border: '1px solid var(--border-light)'
+      border: '1px solid rgba(8, 105, 114, 0.18)'
     },
     stepsGrid: {
       display: 'grid',
@@ -250,14 +250,14 @@ export default function OnlineTherapyPage({ onAddBooking }) {
     },
     stepCard: {
       position: 'relative',
-      backgroundColor: '#fff',
-      border: '1px solid var(--border-light)',
+      background: 'linear-gradient(135deg, rgba(244, 252, 251, 0.96) 0%, rgba(222, 244, 240, 0.96) 100%)',
+      border: '1px solid rgba(8, 105, 114, 0.18)',
       borderRadius: 'var(--radius-lg)',
       padding: '36px 28px',
       display: 'flex',
       flexDirection: 'column',
       gap: '16px',
-      boxShadow: 'var(--shadow-sm)',
+      boxShadow: '0 8px 24px rgba(8, 105, 114, 0.06)',
       transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
       overflow: 'hidden'
     },
@@ -359,8 +359,8 @@ export default function OnlineTherapyPage({ onAddBooking }) {
       margin: '90px auto 0'
     },
     faqItem: {
-      backgroundColor: '#fff',
-      border: '1px solid var(--border-light)',
+      background: 'linear-gradient(135deg, rgba(244, 252, 251, 0.96) 0%, rgba(222, 244, 240, 0.96) 100%)',
+      border: '1px solid rgba(8, 105, 114, 0.18)',
       borderRadius: 'var(--radius-sm)',
       marginBottom: '16px',
       overflow: 'hidden',

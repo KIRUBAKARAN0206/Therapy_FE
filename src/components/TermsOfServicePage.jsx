@@ -62,10 +62,10 @@ export default function TermsOfServicePage() {
     card: {
       maxWidth: '900px',
       margin: '-80px auto 0 auto',
-      backgroundColor: 'var(--bg-card)',
+      background: 'linear-gradient(135deg, rgba(244, 252, 251, 0.96) 0%, rgba(222, 244, 240, 0.96) 100%)',
       borderRadius: 'var(--radius-lg)',
-      boxShadow: 'var(--shadow-premium)',
-      border: '1px solid var(--border-light)',
+      boxShadow: '0 20px 60px rgba(8, 105, 114, 0.12)',
+      border: '1px solid rgba(8, 105, 114, 0.22)',
       padding: '56px',
       position: 'relative',
       zIndex: '10'
@@ -123,10 +123,10 @@ export default function TermsOfServicePage() {
       alignItems: 'center',
       gap: '20px',
       padding: '24px',
-      backgroundColor: 'var(--bg-main)',
+      background: 'linear-gradient(135deg, rgba(228, 244, 240, 0.9) 0%, rgba(215, 238, 233, 0.9) 100%)',
       borderRadius: 'var(--radius-md)',
       marginTop: '20px',
-      border: '1px solid var(--border-light)'
+      border: '1px solid rgba(8, 105, 114, 0.2)'
     },
     contactIcon: {
       backgroundColor: 'var(--primary-glow)',
