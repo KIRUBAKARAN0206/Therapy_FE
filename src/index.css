@@ -977,14 +977,62 @@ button, input, select, textarea {
   transform: translateX(4px);
 }
 
-/* Premium Footer Redesign */
+/* Compact & Sleek Modern Footer */
 .footer-main {
-  background: var(--gradient-dark) !important;
+  background: linear-gradient(180deg, #091a16 0%, #050e0c 100%) !important;
   color: var(--text-light) !important;
-  padding: 85px 24px 45px !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  padding: 48px 24px 20px !important;
+  border-top: 1px solid rgba(20, 184, 166, 0.2) !important;
   position: relative;
   overflow: hidden;
+}
+
+.footer-main::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, #14b8a6 30%, #84cc16 70%, transparent 100%);
+  opacity: 0.8;
+}
+
+/* CodeThrive Credit Badge */
+.codethrive-credit-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  font-size: 0.8rem;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.codethrive-credit-badge:hover {
+  background: rgba(20, 184, 166, 0.12);
+  border-color: rgba(132, 204, 22, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(20, 184, 166, 0.2);
+}
+
+.codethrive-logo-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.codethrive-company-name {
+  font-weight: 700;
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  background: linear-gradient(135deg, #2dd4bf 0%, #a3e635 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.03em;
 }
 
 /* Sliding link underline in footer */
@@ -994,6 +1042,7 @@ button, input, select, textarea {
   color: #94a3b8 !important;
   transition: color 0.3s ease;
   padding: 2px 0;
+  font-size: 0.88rem;
 }
 
 .footer-link::after {
@@ -1003,7 +1052,7 @@ button, input, select, textarea {
   left: 0;
   width: 100%;
   height: 1.5px;
-  background: linear-gradient(90deg, var(--secondary) 0%, var(--primary) 100%);
+  background: linear-gradient(90deg, #14b8a6 0%, #84cc16 100%);
   transform: scaleX(0);
   transform-origin: right;
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1020,8 +1069,8 @@ button, input, select, textarea {
 
 /* Social icons transition */
 .social-icon-btn {
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.06);
   display: flex;
@@ -1029,18 +1078,15 @@ button, input, select, textarea {
   justify-content: center;
   color: #cbd5e1;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-              background 0.4s ease,
-              border-color 0.4s ease,
-              box-shadow 0.4s ease;
+  transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .social-icon-btn:hover {
-  transform: translateY(-5px) scale(1.1);
+  transform: translateY(-3px) scale(1.08);
   color: #ffffff !important;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%) !important;
+  background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%) !important;
   border-color: transparent !important;
-  box-shadow: 0 8px 20px rgba(20, 184, 166, 0.35) !important;
+  box-shadow: 0 6px 16px rgba(20, 184, 166, 0.35) !important;
 }
 
 /* Expanded details panel in service card */
