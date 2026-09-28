@@ -234,7 +234,63 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
     fetchGallery();
   }, []);
 
-  const handlePhotoUpload = (e) => {
+  // Smart automatic image compression helper (downscales & compresses high-res/large images to ~200-300KB)
+  const compressImageFile = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64Data = event.target.result;
+        const img = new window.Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxDim = 1200; // max resolution preserving crisp clarity
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxDim) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext('2d');
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Iterative WebP quality compression targeting optimal file size (~250-350KB max)
+          let quality = 0.82;
+          let resultUrl = canvas.toDataURL('image/webp', quality);
+
+          while (resultUrl.length > 350 * 1024 && quality > 0.3) {
+            quality -= 0.12;
+            resultUrl = canvas.toDataURL('image/webp', quality);
+          }
+
+          if (!resultUrl || !resultUrl.startsWith('data:image/webp')) {
+            resultUrl = canvas.toDataURL('image/jpeg', 0.8);
+          }
+
+          resolve(resultUrl);
+        };
+        img.onerror = () => resolve(base64Data);
+        img.src = base64Data;
+      };
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handlePhotoUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -246,7 +302,8 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
       return;
     }
 
-    const isConfirmed = window.confirm(`Are you sure you want to upload this file: "${file.name}"?`);
+    const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+    const isConfirmed = window.confirm(`Upload file: "${file.name}" (${fileSizeMB} MB)?\nLarge images will be automatically compressed for optimal speed.`);
     if (!isConfirmed) {
       e.target.value = null; // Reset selection
       return;
@@ -259,46 +316,24 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
     setIsUploading(true);
     setUploadError('');
 
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      const base64Data = event.target.result;
-      
-      let finalDataUrl = base64Data;
-
+    try {
+      let finalDataUrl;
       if (isImage) {
-        // Compress image using canvas
-        await new Promise((resolve) => {
-          const img = new window.Image();
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const maxDim = 800; // downscale high-res images
-            let width = img.width;
-            let height = img.height;
-
-            if (width > height) {
-              if (width > maxDim) {
-                height = Math.round((height * maxDim) / width);
-                width = maxDim;
-              }
-            } else {
-              if (height > maxDim) {
-                width = Math.round((width * maxDim) / height);
-                height = maxDim;
-              }
-            }
-
-            canvas.width = width;
-            canvas.height = height;
-
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-
-            // Compress WebP to respect database size
-            finalDataUrl = canvas.toDataURL('image/webp', 0.8);
-            resolve();
-          };
-          img.src = base64Data;
+        // Auto compress high-res/large images seamlessly
+        finalDataUrl = await compressImageFile(file);
+      } else {
+        // Videos read as Data URL
+        finalDataUrl = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (evt) => resolve(evt.target.result);
+          reader.readAsDataURL(file);
         });
+      }
+
+      if (!finalDataUrl) {
+        setUploadError("Failed to process file.");
+        setIsUploading(false);
+        return;
       }
 
       const newPhoto = {
@@ -308,51 +343,48 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
         url: finalDataUrl
       };
 
+      let savedPhoto = newPhoto;
       try {
-        let savedPhoto = newPhoto;
-        try {
-          const response = await fetch(`${API_BASE}/api/gallery`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newPhoto)
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            savedPhoto = data.photo || newPhoto;
-            if (savedPhoto.url && savedPhoto.url.startsWith('/')) {
-              savedPhoto.url = `${API_BASE}${savedPhoto.url}`;
-            }
-          }
-        } catch (apiErr) {
-          console.warn("Backend upload network error, saving to local gallery storage", apiErr);
-        }
-
-        // Always update State & LocalStorage so uploaded images are NEVER lost!
-        setGalleryPhotos(prev => {
-          const updated = [savedPhoto, ...prev.filter(p => p.id !== savedPhoto.id)];
-          try {
-            localStorage.setItem('gallery_photos', JSON.stringify(updated));
-          } catch (lsErr) {
-            console.warn("Failed to update localStorage gallery photos", lsErr);
-          }
-          return updated;
+        const response = await fetch(`${API_BASE}/api/gallery`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newPhoto)
         });
 
-        setNewPhotoTitle('');
-        setCustomCategoryName('');
-        if (newPhotoCategory === '--new--') {
-          setNewPhotoCategory(resolvedCategory);
+        if (response.ok) {
+          const data = await response.json();
+          savedPhoto = data.photo || newPhoto;
+          if (savedPhoto.url && savedPhoto.url.startsWith('/')) {
+            savedPhoto.url = `${API_BASE}${savedPhoto.url}`;
+          }
         }
-      } catch (err) {
-        console.error("Upload process error", err);
-        setUploadError("Error saving image file.");
-      } finally {
-        setIsUploading(false);
-        e.target.value = null; // Clear file input selection
+      } catch (apiErr) {
+        console.warn("Backend upload network error, saving to local gallery storage", apiErr);
       }
-    };
-    reader.readAsDataURL(file);
+
+      // Always update State & LocalStorage so uploaded images are NEVER lost!
+      setGalleryPhotos(prev => {
+        const updated = [savedPhoto, ...prev.filter(p => p.id !== savedPhoto.id)];
+        try {
+          localStorage.setItem('gallery_photos', JSON.stringify(updated));
+        } catch (lsErr) {
+          console.warn("Failed to update localStorage gallery photos", lsErr);
+        }
+        return updated;
+      });
+
+      setNewPhotoTitle('');
+      setCustomCategoryName('');
+      if (newPhotoCategory === '--new--') {
+        setNewPhotoCategory(resolvedCategory);
+      }
+    } catch (err) {
+      console.error("Upload process error", err);
+      setUploadError("Error compressing/uploading image file.");
+    } finally {
+      setIsUploading(false);
+      e.target.value = null; // Clear file input selection
+    }
   };
 
   const deletePhoto = async (id) => {
