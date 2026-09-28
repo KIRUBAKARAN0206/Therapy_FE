@@ -1,5 +1,6 @@
 import React from 'react';
 import logoImg from '../assets/logo.webp';
+import codeThriveLogo from '../assets/codethrive_logo.png';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -113,44 +114,27 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Footer Bottom Bar */}
-        <div style={{
-          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-          paddingTop: '20px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '16px',
-          fontSize: '0.82rem',
-          color: '#64748b'
-        }}>
-          {/* Copyright */}
-          <div>
+        {/* Footer Bottom Bar (Justified & Centered Layout) */}
+        <div className="footer-bottom-bar">
+          {/* Left: Copyright */}
+          <div className="footer-bottom-copyright">
             &copy; {currentYear} <span className="notranslate">{getIsTamil() ? 'தி தெரபி யூனிவர்ஸ்' : 'THE THERAPY UNIVERSE'}</span>. All rights reserved.
           </div>
 
-          {/* CodeThrive Infotech Credit Badge with Logo */}
+          {/* Center: CodeThrive Infotech Credit Badge with Official Uploaded Logo */}
           <div className="codethrive-credit-badge">
             <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>Designed & Developed by</span>
             <div className="codethrive-logo-box">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="url(#ctGradientFooter)" stroke="#84cc16" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                <defs>
-                  <linearGradient id="ctGradientFooter" x1="3" y1="2" x2="21" y2="22" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#14b8a6"/>
-                    <stop offset="1" stopColor="#84cc16"/>
-                  </linearGradient>
-                </defs>
-              </svg>
+              <img src={codeThriveLogo} alt="CodeThrive Infotech Logo" className="codethrive-logo-img" />
               <span className="codethrive-company-name">CodeThrive Infotech</span>
             </div>
           </div>
 
-          {/* Privacy Policy & Terms Links */}
-          <div style={{ display: 'flex', gap: '20px' }}>
-            <a href="#/privacy-policy" className="footer-link" style={{ fontSize: '0.82rem' }}>Privacy Policy</a>
-            <a href="#/terms-of-service" className="footer-link" style={{ fontSize: '0.82rem' }}>Terms of Service</a>
+          {/* Right: Privacy Policy & Terms of Service */}
+          <div className="footer-bottom-links">
+            <a href="#/privacy-policy" className="footer-link">Privacy Policy</a>
+            <span className="footer-link-divider">•</span>
+            <a href="#/terms-of-service" className="footer-link">Terms of Service</a>
           </div>
         </div>
       </div>
@@ -166,5 +150,6 @@ export default function Footer() {
     </footer>
   );
 }
+
 
 
