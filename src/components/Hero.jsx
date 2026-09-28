@@ -5,7 +5,7 @@ import heroImage from '../assets/physio_hero.webp';
 export default function Hero() {
   const styles = {
     section: {
-      padding: '56px 24px 64px',
+      padding: '40px 24px 60px',
       background: 'var(--gradient-light)',
       position: 'relative',
       overflow: 'hidden'

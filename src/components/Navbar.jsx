@@ -87,7 +87,6 @@ export default function Navbar() {
       boxShadow: scrolled ? 'var(--shadow-sm)' : '0 2px 10px rgba(30, 64, 175, 0.01)'
     },
     nav: {
-      width: '100%',
       maxWidth: '1400px',
       margin: '0 auto',
       display: 'flex',

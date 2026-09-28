@@ -80,16 +80,17 @@ export default function App() {
     fetchBookings();
   }, []);
 
-  // Update hash state on changes with instant sub-millisecond response
+  // Update hash state on changes
   useEffect(() => {
     const handleHashChange = () => {
+      setLoading(true);
       setTransitionActive(false);
       setCurrentHash(window.location.hash || '#/');
-      window.scrollTo(0, 0);
       
+      // Simulate quick premium loading transitions
       const timer = setTimeout(() => {
         setLoading(false);
-        setTransitionActive(true);
+        window.scrollTo(0, 0);
       }, 40);
 
       return () => clearTimeout(timer);
@@ -188,7 +189,7 @@ export default function App() {
       )}
 
       <Navbar />
-      <main style={{ marginTop: '72px', minHeight: 'calc(100svh - 400px)' }} className={`route-transition ${transitionActive ? 'active' : ''}`}>
+      <main style={{ marginTop: '64px', minHeight: 'calc(100svh - 400px)' }} className={`route-transition ${transitionActive ? 'active' : ''}`}>
         <Suspense fallback={<LoadingLogoSpinner />}>
           {renderContent()}
         </Suspense>
