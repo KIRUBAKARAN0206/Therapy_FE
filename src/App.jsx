@@ -87,11 +87,11 @@ export default function App() {
       setTransitionActive(false);
       setCurrentHash(window.location.hash || '#/');
       
-      // Smooth page transition loader with official clinic logo
+      // Simulate quick premium loading transitions
       const timer = setTimeout(() => {
         setLoading(false);
         window.scrollTo(0, 0);
-      }, 450);
+      }, 40);
 
       return () => clearTimeout(timer);
     };
@@ -125,16 +125,15 @@ export default function App() {
   };
 
   const LoadingLogoSpinner = () => (
-    <div className="page-route-loader-overlay">
-      <div className="preloader-logo-container" style={{ width: '120px', height: '120px', marginBottom: '16px' }}>
-        <div className="preloader-ring-outer" style={{ inset: '-10px' }}></div>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '65vh', gap: '20px' }}>
+      <div className="preloader-logo-container" style={{ width: '100px', height: '100px', marginBottom: 0 }}>
+        <div className="preloader-ring-outer" style={{ inset: '-8px' }}></div>
         <div className="preloader-ring-glow"></div>
-        <img src={logoImg} alt="THE THERAPY UNIVERSE Logo" className="preloader-logo-img" style={{ width: '100px', height: '100px' }} />
+        <img src={logoImg} alt="THE THERAPY UNIVERSE Logo" className="preloader-logo-img" style={{ width: '84px', height: '84px' }} />
       </div>
-      <h2 className="preloader-title notranslate" style={{ fontSize: '1.25rem', marginBottom: '4px' }}>
-        {getIsTamil() ? 'தி தெரபி யூனிவர்ஸ்' : 'THE THERAPY UNIVERSE'}
-      </h2>
-      <p className="preloader-subtitle" style={{ fontSize: '0.75rem', letterSpacing: '0.22em' }}>PHYSIO HEALTH CENTRE</p>
+      <span style={{ fontSize: '0.95rem', color: 'var(--primary)', fontWeight: '700', letterSpacing: '0.06em', fontFamily: 'var(--font-heading)' }}>
+        Loading <span className="notranslate">{getIsTamil() ? 'தி தெரபி யூனிவர்ஸ்' : 'THE THERAPY UNIVERSE'}</span>...
+      </span>
     </div>
   );
 
