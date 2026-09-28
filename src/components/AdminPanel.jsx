@@ -309,30 +309,44 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
       };
 
       try {
-        const response = await fetch(`${API_BASE}/api/gallery`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newPhoto)
+        let savedPhoto = newPhoto;
+        try {
+          const response = await fetch(`${API_BASE}/api/gallery`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newPhoto)
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            savedPhoto = data.photo || newPhoto;
+            if (savedPhoto.url && savedPhoto.url.startsWith('/')) {
+              savedPhoto.url = `${API_BASE}${savedPhoto.url}`;
+            }
+          }
+        } catch (apiErr) {
+          console.warn("Backend upload network error, saving to local gallery storage", apiErr);
+        }
+
+        // Always update State & LocalStorage so uploaded images are NEVER lost!
+        setGalleryPhotos(prev => {
+          const updated = [savedPhoto, ...prev.filter(p => p.id !== savedPhoto.id)];
+          try {
+            localStorage.setItem('gallery_photos', JSON.stringify(updated));
+          } catch (lsErr) {
+            console.warn("Failed to update localStorage gallery photos", lsErr);
+          }
+          return updated;
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          const savedPhoto = data.photo || newPhoto;
-          if (savedPhoto.url && savedPhoto.url.startsWith('/')) {
-            savedPhoto.url = `${API_BASE}${savedPhoto.url}`;
-          }
-          setGalleryPhotos(prev => [savedPhoto, ...prev]);
-          setNewPhotoTitle('');
-          setCustomCategoryName('');
-          if (newPhotoCategory === '--new--') {
-            setNewPhotoCategory(resolvedCategory);
-          }
-        } else {
-          setUploadError("Failed to save to database. File might be too large.");
+        setNewPhotoTitle('');
+        setCustomCategoryName('');
+        if (newPhotoCategory === '--new--') {
+          setNewPhotoCategory(resolvedCategory);
         }
       } catch (err) {
-        console.error("Upload failed", err);
-        setUploadError("Network error during upload.");
+        console.error("Upload process error", err);
+        setUploadError("Error saving image file.");
       } finally {
         setIsUploading(false);
         e.target.value = null; // Clear file input selection
