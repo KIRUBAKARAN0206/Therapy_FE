@@ -23,7 +23,7 @@ export default function PrivacyPolicyPage() {
     },
     header: {
       backgroundColor: 'var(--bg-dark)',
-      backgroundImage: 'linear-gradient(135deg, #0B5D66 0%, #159A9C 100%)',
+      backgroundImage: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
       padding: '100px 24px 140px 24px',
       textAlign: 'center',
       color: '#ffffff',
@@ -37,9 +37,9 @@ export default function PrivacyPolicyPage() {
       height: '72px',
       borderRadius: '50%',
       backgroundColor: 'rgba(251, 191, 36, 0.1)',
-      border: '2px dashed #7EDDD3',
+      border: '2px dashed #fbbf24',
       marginBottom: '20px',
-      color: '#7EDDD3'
+      color: '#fbbf24'
     },
     title: {
       fontFamily: 'var(--font-heading)',
@@ -50,7 +50,7 @@ export default function PrivacyPolicyPage() {
       color: '#ffffff'
     },
     titleYellow: {
-      color: '#7EDDD3'
+      color: '#fbbf24'
     },
     subtitle: {
       fontSize: '1.2rem',
