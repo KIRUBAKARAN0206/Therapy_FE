@@ -80,18 +80,17 @@ export default function App() {
     fetchBookings();
   }, []);
 
-  // Update hash state on changes
+  // Update hash state on changes with instant sub-millisecond response
   useEffect(() => {
     const handleHashChange = () => {
-      setLoading(true);
       setTransitionActive(false);
       setCurrentHash(window.location.hash || '#/');
+      window.scrollTo(0, 0);
       
-      // Simulate quick premium loading transitions
       const timer = setTimeout(() => {
         setLoading(false);
-        window.scrollTo(0, 0);
-      }, 300);
+        setTransitionActive(true);
+      }, 40);
 
       return () => clearTimeout(timer);
     };

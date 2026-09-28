@@ -1,5 +1,31 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
+/* GPU Hardware Acceleration & Speed Optimizations */
+html {
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  overflow-x: hidden;
+  will-change: transform;
+}
+
+.hero-container,
+.card,
+.service-card,
+.specialist-card,
+.stat-card,
+.btn-primary,
+.btn-secondary,
+.footer-main,
+.header-glass {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
 :root {
   /* Fonts */
   --font-heading: 'Outfit', sans-serif;
