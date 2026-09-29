@@ -886,6 +886,102 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
 
   return (
     <div style={styles.dashboard} className="fade-in admin-dashboard-layout">
+      <style>{`
+        .admin-pass-input {
+          -webkit-text-security: disc !important;
+          text-security: disc !important;
+        }
+        @media (max-width: 768px) {
+          .admin-login-box {
+            margin: 30px 12px !important;
+            padding: 24px 16px !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+          }
+          .admin-dashboard-layout {
+            margin: 16px auto 60px !important;
+            padding: 0 12px !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            overflow-x: hidden !important;
+          }
+          .admin-header-box {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 12px !important;
+          }
+          .admin-tabs-scroll {
+            overflow-x: auto !important;
+            display: flex !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            padding-bottom: 8px !important;
+            margin-bottom: 20px !important;
+            border-bottom: 1px solid var(--border-light);
+            -webkit-overflow-scrolling: touch !important;
+            white-space: nowrap !important;
+            scrollbar-width: thin;
+          }
+          .admin-tabs-scroll button {
+            flex-shrink: 0 !important;
+            font-size: 0.85rem !important;
+            padding: 8px 12px !important;
+          }
+          .gallery-admin-grid {
+            grid-template-columns: 1fr !important;
+            gap: 20px !important;
+            width: 100% !important;
+          }
+          .whatsapp-admin-grid {
+            grid-template-columns: 1fr !important;
+            gap: 20px !important;
+            width: 100% !important;
+          }
+          .whatsapp-status-flex {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 14px !important;
+            padding: 14px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+          }
+          .whatsapp-actions-flex {
+            width: 100% !important;
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 8px !important;
+          }
+          .whatsapp-actions-flex button {
+            flex: 1 1 calc(50% - 6px) !important;
+            text-align: center !important;
+            justify-content: center !important;
+            padding: 10px 8px !important;
+            font-size: 0.78rem !important;
+          }
+          .admin-card-box {
+            padding: 20px 16px !important;
+            box-sizing: border-box !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow: hidden !important;
+          }
+          .admin-filters-flex {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            width: 100% !important;
+          }
+          .admin-filter-input, .admin-filter-select {
+            width: 100% !important;
+            min-width: auto !important;
+            box-sizing: border-box !important;
+          }
+          .admin-table-container {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            width: 100% !important;
+          }
+        }
+      `}</style>
       <div style={styles.header} className="admin-header-box">
         <div>
           <h1 style={{ fontSize: '2rem', color: 'var(--bg-dark)' }}>Admin Console</h1>
@@ -977,7 +1073,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
       {activeTab === 'gallery' && (
         <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: '40px', alignItems: 'start' }} className="gallery-admin-grid">
           {/* Upload Form Card */}
-          <div style={{ backgroundColor: '#fff', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-lg)', padding: '24px', boxShadow: 'var(--shadow-md)' }}>
+          <div style={{ backgroundColor: '#fff', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-lg)', padding: '24px', boxShadow: 'var(--shadow-md)' }} className="admin-card-box">
             <h3 style={{ fontSize: '1.2rem', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--bg-dark)' }}>
               <Upload size={18} color="var(--primary)" /> Add New Photo
             </h3>
@@ -1276,15 +1372,15 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
 
 
       {activeTab === 'whatsapp' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px', alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px', alignItems: 'start' }} className="whatsapp-admin-grid">
           {/* WhatsApp Status Card */}
-          <div style={{ backgroundColor: '#fff', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-lg)', padding: '32px', boxShadow: 'var(--shadow-md)' }}>
+          <div style={{ backgroundColor: '#fff', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-lg)', padding: '32px', boxShadow: 'var(--shadow-md)' }} className="admin-card-box">
             <h3 style={{ fontSize: '1.25rem', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--bg-dark)' }}>
               ⚡ WhatsApp Notification Bot Status
             </h3>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'var(--bg-main)', padding: '16px 20px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'var(--bg-main)', padding: '16px 20px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)' }} className="whatsapp-status-flex">
                 <div>
                   <p style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>Bot Status</p>
                   <span style={{
@@ -1308,7 +1404,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
                     {whatsappStatus.isConnected ? 'CONNECTED' : 'DISCONNECTED'}
                   </span>
                 </div>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div style={{ display: 'flex', gap: '8px' }} className="whatsapp-actions-flex">
                   <button
                     onClick={handleWhatsappReconnect}
                     disabled={loadingWhatsapp}
@@ -1360,7 +1456,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
           </div>
 
           {/* QR Code Scan Card */}
-          <div style={{ backgroundColor: '#fff', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-lg)', padding: '32px', boxShadow: 'var(--shadow-md)', textAlign: 'center' }}>
+          <div style={{ backgroundColor: '#fff', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-lg)', padding: '32px', boxShadow: 'var(--shadow-md)', textAlign: 'center' }} className="admin-card-box">
             <h3 style={{ fontSize: '1.25rem', marginBottom: '20px', color: 'var(--bg-dark)' }}>
               Scan QR Code to Link Bot
             </h3>
@@ -1415,7 +1511,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
       )}
 
       {activeTab === 'security' && (
-        <div style={{ maxWidth: '500px', margin: '0 auto', backgroundColor: '#fff', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-lg)', padding: '32px', boxShadow: 'var(--shadow-md)' }}>
+        <div style={{ maxWidth: '500px', margin: '0 auto', backgroundColor: '#fff', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-lg)', padding: '32px', boxShadow: 'var(--shadow-md)' }} className="admin-card-box">
           <h3 style={{ fontSize: '1.25rem', marginBottom: '8px', color: 'var(--bg-dark)', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Key size={20} color="var(--primary)" /> Change Admin Password
           </h3>
