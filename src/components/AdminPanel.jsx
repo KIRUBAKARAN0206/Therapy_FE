@@ -24,7 +24,13 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
 
   // Gallery management state
   const [activeTab, setActiveTab] = useState('bookings'); // 'bookings' or 'gallery'
-  const [galleryPhotos, setGalleryPhotos] = useState([]);
+  const [galleryPhotos, setGalleryPhotos] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('gallery_photos') || '[]');
+    } catch (e) {
+      return [];
+    }
+  });
   const [newPhotoTitle, setNewPhotoTitle] = useState('');
   const [newPhotoCategory, setNewPhotoCategory] = useState('Rehabilitation Therapy');
   const [customCategoryName, setCustomCategoryName] = useState('');
@@ -206,6 +212,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
     const fetchGallery = async () => {
       try {
         let backendData = [];
+        let fetchedFromBackend = false;
         try {
           const response = await fetch(`${API_BASE}/api/gallery`);
           if (response.ok) {
@@ -214,19 +221,22 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
               ...p,
               url: (p.url && p.url.startsWith('/')) ? `${API_BASE}${p.url}` : p.url
             }));
+            fetchedFromBackend = true;
           }
         } catch (apiError) {
           console.error("Backend fetch failed, relying on local storage", apiError);
         }
 
-        // Restore legacy photos from localStorage
-        const localData = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
-        
-        // Merge and deduplicate
-        const allPhotos = [...backendData, ...localData];
-        const uniquePhotos = Array.from(new Map(allPhotos.map(p => [p.id, p])).values());
-        
-        setGalleryPhotos(uniquePhotos);
+        if (fetchedFromBackend) {
+          setGalleryPhotos(backendData);
+          try {
+            localStorage.setItem('gallery_photos', JSON.stringify(backendData));
+          } catch(e) {}
+        } else {
+          // Restore legacy photos from localStorage if backend is offline
+          const localData = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
+          setGalleryPhotos(localData);
+        }
       } catch (e) {
         console.error("Failed to parse gallery photos", e);
       }

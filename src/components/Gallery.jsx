@@ -68,10 +68,16 @@ function ImageWithLoader({ src, alt, className, style }) {
 
 export default function Gallery() {
   const [activeFilter, setActiveFilter] = useState('All');
-  const [customPhotos, setCustomPhotos] = useState([]);
+  const [customPhotos, setCustomPhotos] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('gallery_photos') || '[]');
+    } catch (e) {
+      return [];
+    }
+  });
   const [selectedPhotoIdx, setSelectedPhotoIdx] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState(null);
-  const [viewMode, setViewMode] = useState('folders'); // 'folders' or 'all'
+  const [viewMode, setViewMode] = useState('all'); // Default to 'all' so all uploaded clinic photos are directly displayed to every visitor instantly
   
   // Interactive features states
   const [likedPhotos, setLikedPhotos] = useState([]);
@@ -152,6 +158,7 @@ export default function Gallery() {
     const fetchGallery = async () => {
       try {
         let backendData = [];
+        let fetchedFromBackend = false;
         try {
           const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
           const response = await fetch(`${apiBase}/api/gallery`);
@@ -161,19 +168,22 @@ export default function Gallery() {
               ...p,
               url: (p.url && p.url.startsWith('/')) ? `${apiBase}${p.url}` : p.url
             }));
+            fetchedFromBackend = true;
           }
         } catch (apiError) {
           console.error("Backend fetch failed, relying on local storage", apiError);
         }
 
-        // Restore legacy photos from localStorage
-        const localData = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
-        
-        // Merge and deduplicate
-        const allPhotos = [...backendData, ...localData];
-        const uniquePhotos = Array.from(new Map(allPhotos.map(p => [p.id, p])).values());
-        
-        setCustomPhotos(uniquePhotos);
+        if (fetchedFromBackend) {
+          setCustomPhotos(backendData);
+          try {
+            localStorage.setItem('gallery_photos', JSON.stringify(backendData));
+          } catch(e) {}
+        } else {
+          // Restore legacy photos from localStorage if backend is offline
+          const localData = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
+          setCustomPhotos(localData);
+        }
       } catch (e) {
         console.error("Failed to parse gallery photos", e);
       }
