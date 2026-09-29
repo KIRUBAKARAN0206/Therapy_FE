@@ -192,7 +192,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
 
     if (!isOfficial) {
       setForgotMsg({
-        text: '❌ Invalid clinic contact number. Password reset is restricted to the official phone number owner (+91 8220952580).',
+        text: '❌ Invalid contact number',
         isError: true
       });
       return;
@@ -684,7 +684,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
             <Key size={20} color="var(--primary)" /> Reset Admin Password
           </h2>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '20px', lineHeight: '1.4' }}>
-            Enter official clinic contact phone number (listed on website contact page) to verify ownership and reset password.
+            Enter official contact phone number to verify ownership and reset password.
           </p>
 
           {forgotMsg && (
@@ -707,7 +707,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
               <label style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Official Contact Phone Number</label>
               <input
                 type="text"
-                placeholder="e.g. +91 8220952580"
+                placeholder="Enter phone number"
                 value={forgotPhone}
                 onChange={(e) => setForgotPhone(e.target.value)}
                 style={{ ...styles.input, marginBottom: 0 }}
