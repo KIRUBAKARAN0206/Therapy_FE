@@ -142,7 +142,10 @@ export default function App() {
       return <LoadingLogoSpinner />;
     }
 
-    switch (currentHash) {
+    const normalizedHash = (currentHash || '#/').toLowerCase().trim().replace(/\/$/, '');
+
+    switch (normalizedHash) {
+      case '#':
       case '#/':
       case '#home':
         return <Home onNavigate={handleNavigate} />;
@@ -165,6 +168,7 @@ export default function App() {
       case '#/online-therapy':
         return <OnlineTherapyPage onAddBooking={handleAddBooking} />;
       case '#/admin':
+      case '#/adn':
         return <AdminPanel bookings={bookings} onUpdateBookings={handleUpdateBookings} />;
       default:
         return <Home onNavigate={handleNavigate} />;

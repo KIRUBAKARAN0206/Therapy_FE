@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { Lock, LogOut, CheckCircle, XCircle, Trash2, Calendar, Phone, Mail, Clock, ShieldAlert, CheckSquare, Image, Upload, Plus, MessageSquare, Eye, EyeOff } from 'lucide-react';
 import logoImg from '../assets/logo.webp';
 
