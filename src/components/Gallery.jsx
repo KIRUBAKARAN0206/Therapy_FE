@@ -77,7 +77,7 @@ export default function Gallery() {
   });
   const [selectedPhotoIdx, setSelectedPhotoIdx] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState(null);
-  const [viewMode, setViewMode] = useState('all'); // Default to 'all' so all uploaded clinic photos are directly displayed to every visitor instantly
+  const [viewMode, setViewMode] = useState('folders'); // Default to folder view so photos stay neatly organized in category folders
   
   // Interactive features states
   const [likedPhotos, setLikedPhotos] = useState([]);
@@ -539,12 +539,9 @@ export default function Gallery() {
                 const folderPhotos = allPhotos.filter(p => p.category === folderName);
                 const count = folderPhotos.length;
                 
-                // Get custom photos for this folder
-                const customFolderPhotos = customPhotos.filter(p => p.category === folderName);
-                // The first uploaded photo is the oldest, which is at the end of customFolderPhotos
-                const coverPhoto = customFolderPhotos.length > 0
-                  ? customFolderPhotos[customFolderPhotos.length - 1]?.url
-                  : defaultPhotos.filter(p => p.category === folderName)[0]?.url;
+                const coverPhoto = folderPhotos.length > 0
+                  ? folderPhotos[0]?.url
+                  : getFolderFallback(folderName);
                 return (
                   <div 
                     key={folderName}
