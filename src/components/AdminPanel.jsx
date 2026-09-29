@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { Lock, LogOut, CheckCircle, XCircle, Trash2, Calendar, Phone, Mail, Clock, ShieldAlert, CheckSquare, Image, Upload, Plus, MessageSquare } from 'lucide-react';
+import { Lock, LogOut, CheckCircle, XCircle, Trash2, Calendar, Phone, Mail, Clock, ShieldAlert, CheckSquare, Image, Upload, Plus, MessageSquare, Eye, EyeOff } from 'lucide-react';
 import logoImg from '../assets/logo.webp';
 
 import { getApiBase, formatImageUrl } from '../utils/api';
@@ -18,6 +17,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
 
   // Search & Filter state
@@ -589,6 +589,53 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
             -webkit-text-security: disc !important;
             text-security: disc !important;
           }
+          @media (max-width: 768px) {
+            .admin-login-box {
+              margin: 40px 16px !important;
+              padding: 24px 16px !important;
+              max-width: 100% !important;
+            }
+            .admin-dashboard-layout {
+              margin: 20px auto 60px !important;
+              padding: 0 12px !important;
+            }
+            .admin-header-box {
+              flex-direction: column !important;
+              align-items: flex-start !important;
+              gap: 12px !important;
+            }
+            .admin-tabs-scroll {
+              overflow-x: auto !important;
+              display: flex !important;
+              width: 100% !important;
+              padding-bottom: 6px !important;
+              margin-bottom: 24px !important;
+              border-bottom: 1px solid var(--border-light);
+              -webkit-overflow-scrolling: touch;
+              white-space: nowrap;
+            }
+            .admin-tabs-scroll button {
+              flex-shrink: 0 !important;
+              font-size: 0.9rem !important;
+              padding: 10px 12px !important;
+            }
+            .gallery-admin-grid {
+              grid-template-columns: 1fr !important;
+              gap: 24px !important;
+            }
+            .admin-filters-flex {
+              flex-direction: column !important;
+              align-items: stretch !important;
+            }
+            .admin-filter-input, .admin-filter-select {
+              width: 100% !important;
+              min-width: auto !important;
+            }
+            .admin-table-container {
+              overflow-x: auto !important;
+              -webkit-overflow-scrolling: touch;
+            }
+          }
         `}</style>
         <form onSubmit={handleLogin} autoComplete="new-password">
           {/* Prevent browser autofill by redirecting it to hidden dummy fields */}
@@ -597,17 +644,38 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
 
           <div style={{ position: 'relative', marginBottom: '20px' }}>
             <input
-              type="text"
+              type={showPassword ? "text" : "password"}
               name="admin_secret_entry"
               placeholder="Enter Admin Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="admin-pass-input"
+              className={showPassword ? "" : "admin-pass-input"}
               autoComplete="new-password"
-              style={styles.input}
+              style={{ ...styles.input, paddingRight: '44px', marginBottom: 0 }}
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: 'absolute',
+                right: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: 'var(--text-muted)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '6px'
+              }}
+              title={showPassword ? "Hide Password" : "Show Password"}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
-          <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
+          <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: '16px' }}>
             <Lock size={18} /> Access Dashboard
           </button>
         </form>
@@ -616,8 +684,8 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
   }
 
   return (
-    <div style={styles.dashboard} className="fade-in">
-      <div style={styles.header}>
+    <div style={styles.dashboard} className="fade-in admin-dashboard-layout">
+      <div style={styles.header} className="admin-header-box">
         <div>
           <h1 style={{ fontSize: '2rem', color: 'var(--bg-dark)' }}>Admin Console</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}><span className="notranslate">{getIsTamil() ? 'தி தெரபி யூனிவர்ஸ்' : 'THE THERAPY UNIVERSE'}</span> management and control</p>
@@ -628,7 +696,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
       </div>
 
       {/* Dashboard Tabs */}
-      <div style={{ display: 'flex', gap: '16px', borderBottom: '1px solid var(--border-light)', paddingBottom: '1px', marginBottom: '32px' }}>
+      <div style={{ display: 'flex', gap: '16px', borderBottom: '1px solid var(--border-light)', paddingBottom: '1px', marginBottom: '32px' }} className="admin-tabs-scroll">
         <button
           onClick={() => setActiveTab('bookings')}
           style={{
@@ -870,19 +938,21 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
       {activeTab === 'bookings' && (
         <>
           {/* Filters Area */}
-          <div style={styles.filtersBox}>
+          <div style={styles.filtersBox} className="admin-filters-flex">
             <input
               type="text"
               placeholder="Search by name, service or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={styles.filterInput}
+              className="admin-filter-input"
             />
 
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               style={styles.filterSelect}
+              className="admin-filter-select"
             >
               <option value="All">All Statuses</option>
               <option value="Pending">Pending</option>
@@ -903,7 +973,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
               <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginTop: '4px' }}>Adjust your filters or search keywords.</p>
             </div>
           ) : (
-            <div style={{ overflowX: 'auto' }}>
+            <div style={{ overflowX: 'auto' }} className="admin-table-container">
               <table style={styles.table}>
                 <thead>
                   <tr>

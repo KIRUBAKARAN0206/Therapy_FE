@@ -99,37 +99,53 @@ export default function Gallery() {
 
   const defaultPhotos = [
     {
+      id: "local_1",
+      title: "Comprehensive Clinical Rehabilitation",
+      category: "Rehabilitation Therapy",
+      url: clinicalRehabImg,
+      description: "Structured mobility restoration, muscle rehabilitation, and joint physical therapy programs.",
+      baseLikes: 8
+    },
+    {
+      id: "local_2",
+      title: "Post-Injury Patient Recovery Milestones",
+      category: "Patient Recovery",
+      url: dedicatedSpecialistsImg,
+      description: "Dedicated specialist team tracking milestone recovery and functional rehabilitation progress.",
+      baseLikes: 12
+    },
+    {
       id: "local_3",
       title: "Individualized Spinal Mobilization",
       category: "Treatment Sessions",
       url: individualizedTherapyImg,
       description: "Hands-on spinal mobilization and manual therapy tailored specifically to target lower back pain and stiffness.",
-      baseLikes: 0
+      baseLikes: 15
     },
     {
       id: "local_4",
-      title: "Modern Electrotherapy & Modalities",
-      category: "Therapy Programs",
+      title: "Modern Electrotherapy & Healing Modalities",
+      category: "Electro Therapy",
       url: modernTechniquesImg,
       description: "Application of advanced healing technologies including ultrasound and laser therapy for deep tissue recovery.",
-      baseLikes: 0
+      baseLikes: 9
     },
     {
-      id: "unsplash_3",
-      title: "Manual Joint Adjustment",
-      category: "Treatment Sessions",
-      url: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&auto=format&fit=crop&q=80",
-      description: "Targeted skeletal adjustments to restore natural range of motion and relieve muscle strain in the shoulder and neck.",
-      baseLikes: 0
+      id: "local_5",
+      title: "Pediatric Physical Development & Care",
+      category: "Pediatric Therapy",
+      url: physioAboutBestImg,
+      description: "Specialized pediatric physical therapy and milestone guidance for children's growth.",
+      baseLikes: 7
     },
     {
-      id: "unsplash_5",
-      title: "Guided Balance & Core Rehabilitation",
+      id: "local_6",
+      title: "Guided Core Rehabilitation & Fitness Programs",
       category: "Therapy Programs",
-      url: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&auto=format&fit=crop&q=80",
+      url: recoveryBannerImg,
       description: "Group balance, stabilization, and core programs designed for fall prevention and athletic conditioning.",
-      baseLikes: 0
-    },
+      baseLikes: 10
+    }
   ];
 
   const defaultCategories = [
