@@ -6,7 +6,7 @@ import {
   Eye, Award, Activity, Users, Folder, FolderOpen, Zap, Smile
 } from 'lucide-react';
 
-import { getApiBase, formatImageUrl } from '../utils/api';
+import { getApiBase, formatImageUrl, fetchCloudGallery } from '../utils/api';
 
 // Local WebP Assets
 import clinicalRehabImg from '../assets/clinical_rehab.webp';
@@ -191,6 +191,17 @@ export default function Gallery() {
           }
         } catch (apiError) {
           console.error("Backend fetch failed, relying on local storage", apiError);
+        }
+
+        if (fetchedFromBackend && backendData.length > 0) {
+          // If local backend returned data, update cloud backup too
+        } else {
+          // Fall back to Cloud Store for live site
+          const cloudData = await fetchCloudGallery();
+          if (cloudData && cloudData.length > 0) {
+            backendData = cloudData;
+            fetchedFromBackend = true;
+          }
         }
 
         if (fetchedFromBackend) {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Lock, LogOut, CheckCircle, XCircle, Trash2, Calendar, Phone, Mail, Clock, ShieldAlert, CheckSquare, Image, Upload, Plus, MessageSquare, Eye, EyeOff } from 'lucide-react';
 import logoImg from '../assets/logo.webp';
 
-import { getApiBase, formatImageUrl } from '../utils/api';
+import { getApiBase, formatImageUrl, fetchCloudGallery, saveCloudGallery } from '../utils/api';
 
 export default function AdminPanel({ bookings, onUpdateBookings }) {
   const getIsTamil = () => {
@@ -231,6 +231,17 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
           console.error("Backend fetch failed, relying on local storage", apiError);
         }
 
+        if (fetchedFromBackend && backendData.length > 0) {
+          // Local backend returned data
+        } else {
+          // Fall back to Cloud Store for live site
+          const cloudData = await fetchCloudGallery();
+          if (cloudData && cloudData.length > 0) {
+            backendData = cloudData;
+            fetchedFromBackend = true;
+          }
+        }
+
         if (fetchedFromBackend) {
           setGalleryPhotos(backendData);
           try {
@@ -373,14 +384,15 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
           }
         }
       } catch (apiErr) {
-        console.warn("Backend upload network error, saving to local gallery storage", apiErr);
+        console.warn("Backend upload network error, saving to local & cloud gallery storage", apiErr);
       }
 
-      // Always update State & LocalStorage so uploaded images are NEVER lost!
+      // Always update State, LocalStorage & Cloud Store so uploaded images are NEVER lost!
       setGalleryPhotos(prev => {
         const updated = [savedPhoto, ...prev.filter(p => p.id !== savedPhoto.id)];
         try {
           localStorage.setItem('gallery_photos', JSON.stringify(updated));
+          saveCloudGallery(updated);
         } catch (lsErr) {
           console.warn("Failed to update localStorage gallery photos", lsErr);
         }
@@ -408,19 +420,13 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
           method: 'DELETE'
         });
         
-        // Always remove from localStorage to handle legacy photos
-        try {
-          const localData = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
-          const updatedLocal = localData.filter(p => p.id !== id);
-          localStorage.setItem('gallery_photos', JSON.stringify(updatedLocal));
-        } catch(e) {}
+        const updated = galleryPhotos.filter(p => p.id !== id);
+        setGalleryPhotos(updated);
 
-        if (response.ok || response.status === 404) {
-          const updated = galleryPhotos.filter(p => p.id !== id);
-          setGalleryPhotos(updated);
-        } else {
-          alert("Failed to delete photo from backend.");
-        }
+        try {
+          localStorage.setItem('gallery_photos', JSON.stringify(updated));
+          saveCloudGallery(updated);
+        } catch(e) {}
       } catch (err) {
         console.error("Delete failed", err);
         alert("Network error. Could not delete.");
