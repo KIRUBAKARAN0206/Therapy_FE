@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Lock, LogOut, CheckCircle, XCircle, Trash2, Calendar, Phone, Mail, Clock, ShieldAlert, CheckSquare, Image, Upload, Plus, MessageSquare } from 'lucide-react';
 import logoImg from '../assets/logo.webp';
 
+import { getApiBase, formatImageUrl } from '../utils/api';
+
 export default function AdminPanel({ bookings, onUpdateBookings }) {
   const getIsTamil = () => {
     try {
@@ -26,7 +28,8 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
   const [activeTab, setActiveTab] = useState('bookings'); // 'bookings' or 'gallery'
   const [galleryPhotos, setGalleryPhotos] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem('gallery_photos') || '[]');
+      const saved = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
+      return saved.map(p => ({ ...p, url: formatImageUrl(p.url) }));
     } catch (e) {
       return [];
     }
@@ -54,7 +57,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
   // Load VITE env credentials
   const ADMIN_USER = import.meta.env.VITE_ADMIN_USER || 'The Therapy Universe';
   const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASS || 'Balasurya PT';
-  const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const API_BASE = getApiBase();
 
   // WhatsApp Bot state
   const [whatsappStatus, setWhatsappStatus] = useState({ isConnected: false, qrCode: null });
@@ -219,7 +222,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
             backendData = await response.json();
             backendData = backendData.map(p => ({
               ...p,
-              url: (p.url && p.url.startsWith('/')) ? `${API_BASE}${p.url}` : p.url
+              url: formatImageUrl(p.url)
             }));
             fetchedFromBackend = true;
           }
@@ -235,7 +238,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
         } else {
           // Restore legacy photos from localStorage if backend is offline
           const localData = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
-          setGalleryPhotos(localData);
+          setGalleryPhotos(localData.map(p => ({ ...p, url: formatImageUrl(p.url) })));
         }
       } catch (e) {
         console.error("Failed to parse gallery photos", e);

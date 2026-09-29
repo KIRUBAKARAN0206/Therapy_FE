@@ -6,6 +6,8 @@ import {
   Eye, Award, Activity, Users, Folder, FolderOpen, Zap, Smile
 } from 'lucide-react';
 
+import { getApiBase, formatImageUrl } from '../utils/api';
+
 // Local WebP Assets
 import clinicalRehabImg from '../assets/clinical_rehab.webp';
 import dedicatedSpecialistsImg from '../assets/dedicated_specialists.webp';
@@ -70,7 +72,8 @@ export default function Gallery() {
   const [activeFilter, setActiveFilter] = useState('All');
   const [customPhotos, setCustomPhotos] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem('gallery_photos') || '[]');
+      const saved = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
+      return saved.map(p => ({ ...p, url: formatImageUrl(p.url) }));
     } catch (e) {
       return [];
     }
@@ -160,13 +163,13 @@ export default function Gallery() {
         let backendData = [];
         let fetchedFromBackend = false;
         try {
-          const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+          const apiBase = getApiBase();
           const response = await fetch(`${apiBase}/api/gallery`);
           if (response.ok) {
             backendData = await response.json();
             backendData = backendData.map(p => ({
               ...p,
-              url: (p.url && p.url.startsWith('/')) ? `${apiBase}${p.url}` : p.url
+              url: formatImageUrl(p.url)
             }));
             fetchedFromBackend = true;
           }
@@ -182,7 +185,7 @@ export default function Gallery() {
         } else {
           // Restore legacy photos from localStorage if backend is offline
           const localData = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
-          setCustomPhotos(localData);
+          setCustomPhotos(localData.map(p => ({ ...p, url: formatImageUrl(p.url) })));
         }
       } catch (e) {
         console.error("Failed to parse gallery photos", e);
