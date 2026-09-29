@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Lock, LogOut, CheckCircle, XCircle, Trash2, Calendar, Phone, Mail, Clock, ShieldAlert, CheckSquare, Image, Upload, Plus, MessageSquare, Eye, EyeOff } from 'lucide-react';
+import { Lock, LogOut, CheckCircle, XCircle, Trash2, Calendar, Phone, Mail, Clock, ShieldAlert, CheckSquare, Image, Upload, Plus, MessageSquare, Eye, EyeOff, Key, HelpCircle, ShieldCheck } from 'lucide-react';
 import logoImg from '../assets/logo.webp';
 
 import { getApiBase, formatImageUrl, fetchCloudGallery, saveCloudGallery } from '../utils/api';
@@ -20,6 +20,18 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
+
+  // Forgot password & Change password state
+  const [isForgotMode, setIsForgotMode] = useState(false);
+  const [forgotPhone, setForgotPhone] = useState('');
+  const [forgotNewPass, setForgotNewPass] = useState('');
+  const [forgotConfirmPass, setForgotConfirmPass] = useState('');
+  const [forgotMsg, setForgotMsg] = useState(null);
+
+  const [changeCurrentPass, setChangeCurrentPass] = useState('');
+  const [changeNewPass, setChangeNewPass] = useState('');
+  const [changeConfirmPass, setChangeConfirmPass] = useState('');
+  const [changeMsg, setChangeMsg] = useState(null);
 
   // Search & Filter state
   const [searchTerm, setSearchTerm] = useState('');
@@ -156,14 +168,94 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
     };
   }, [isAuthenticated]);
 
+  const getEffectiveAdminPass = () => {
+    return localStorage.getItem('admin_custom_password') || ADMIN_PASS;
+  };
+
   const handleLogin = (e) => {
     e.preventDefault();
-    if (password === ADMIN_PASS) {
+    const activePass = getEffectiveAdminPass();
+    if (password === activePass) {
       setIsAuthenticated(true);
       setLoginError('');
     } else {
       setLoginError('Invalid admin password');
     }
+  };
+
+  const handleForgotPasswordSubmit = (e) => {
+    e.preventDefault();
+    setForgotMsg(null);
+
+    const cleanPhone = forgotPhone.replace(/[^0-9]/g, '');
+    const isOfficial = cleanPhone.endsWith('8220952580');
+
+    if (!isOfficial) {
+      setForgotMsg({
+        text: '❌ Invalid clinic contact number. Password reset is restricted to the official phone number owner (+91 8220952580).',
+        isError: true
+      });
+      return;
+    }
+
+    if (!forgotNewPass || forgotNewPass.length < 4) {
+      setForgotMsg({
+        text: '❌ New password must be at least 4 characters long.',
+        isError: true
+      });
+      return;
+    }
+
+    if (forgotNewPass !== forgotConfirmPass) {
+      setForgotMsg({
+        text: '❌ Passwords do not match.',
+        isError: true
+      });
+      return;
+    }
+
+    localStorage.setItem('admin_custom_password', forgotNewPass);
+    setForgotMsg({
+      text: '✅ Password reset successful! Redirecting to login...',
+      isError: false
+    });
+
+    setTimeout(() => {
+      setIsForgotMode(false);
+      setPassword(forgotNewPass);
+      setForgotPhone('');
+      setForgotNewPass('');
+      setForgotConfirmPass('');
+      setForgotMsg(null);
+    }, 1800);
+  };
+
+  const handleChangePasswordSubmit = (e) => {
+    e.preventDefault();
+    setChangeMsg(null);
+
+    const activePass = getEffectiveAdminPass();
+    if (changeCurrentPass !== activePass) {
+      setChangeMsg({ text: '❌ Current password is incorrect.', isError: true });
+      return;
+    }
+
+    if (!changeNewPass || changeNewPass.length < 4) {
+      setChangeMsg({ text: '❌ New password must be at least 4 characters long.', isError: true });
+      return;
+    }
+
+    if (changeNewPass !== changeConfirmPass) {
+      setChangeMsg({ text: '❌ New passwords do not match.', isError: true });
+      return;
+    }
+
+    localStorage.setItem('admin_custom_password', changeNewPass);
+    setChangeMsg({ text: '✅ Admin password changed successfully!', isError: false });
+
+    setChangeCurrentPass('');
+    setChangeNewPass('');
+    setChangeConfirmPass('');
   };
 
   const handleLogout = () => {
@@ -570,8 +662,101 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
   };
 
   if (!isAuthenticated) {
+    if (isForgotMode) {
+      return (
+        <div style={styles.loginContainer} className="admin-login-box fade-in">
+          <div
+            className="brand-logo-container"
+            style={{ justifyContent: 'center', marginBottom: '24px' }}
+          >
+            <img
+              src={logoImg}
+              alt="THE THERAPY UNIVERSE Logo"
+              className="brand-logo-img"
+              style={{ height: '44px' }}
+            />
+            <span className="brand-logo-text notranslate" style={{ fontSize: '1.3rem' }}>
+              {getIsTamil() ? 'தி தெரபி யூனிவர்ஸ்' : 'THE THERAPY UNIVERSE'}
+            </span>
+          </div>
+
+          <h2 style={{ fontSize: '1.35rem', marginBottom: '8px', color: 'var(--bg-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <Key size={20} color="var(--primary)" /> Reset Admin Password
+          </h2>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '20px', lineHeight: '1.4' }}>
+            Enter official clinic contact phone number (listed on website contact page) to verify ownership and reset password.
+          </p>
+
+          {forgotMsg && (
+            <div style={{
+              color: forgotMsg.isError ? '#ef4444' : '#10b981',
+              backgroundColor: forgotMsg.isError ? '#fee2e2' : '#d1fae5',
+              padding: '10px 14px',
+              borderRadius: '6px',
+              fontSize: '0.82rem',
+              marginBottom: '16px',
+              fontWeight: '600',
+              lineHeight: '1.4'
+            }}>
+              {forgotMsg.text}
+            </div>
+          )}
+
+          <form onSubmit={handleForgotPasswordSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', textAlign: 'left' }}>
+              <label style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Official Contact Phone Number</label>
+              <input
+                type="text"
+                placeholder="e.g. +91 8220952580"
+                value={forgotPhone}
+                onChange={(e) => setForgotPhone(e.target.value)}
+                style={{ ...styles.input, marginBottom: 0 }}
+                required
+              />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', textAlign: 'left' }}>
+              <label style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>New Password</label>
+              <input
+                type="password"
+                placeholder="Enter new password"
+                value={forgotNewPass}
+                onChange={(e) => setForgotNewPass(e.target.value)}
+                style={{ ...styles.input, marginBottom: 0 }}
+                required
+              />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', textAlign: 'left' }}>
+              <label style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Confirm New Password</label>
+              <input
+                type="password"
+                placeholder="Re-enter new password"
+                value={forgotConfirmPass}
+                onChange={(e) => setForgotConfirmPass(e.target.value)}
+                style={{ ...styles.input, marginBottom: 0 }}
+                required
+              />
+            </div>
+
+            <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: '8px' }}>
+              <ShieldCheck size={18} /> Reset Password
+            </button>
+
+            <button
+              type="button"
+              onClick={() => { setIsForgotMode(false); setForgotMsg(null); }}
+              style={{ border: 'none', background: 'none', color: 'var(--text-muted)', fontSize: '0.85rem', cursor: 'pointer', marginTop: '8px' }}
+            >
+              ← Back to Login
+            </button>
+          </form>
+        </div>
+      );
+    }
+
     return (
-      <div style={styles.loginContainer}>
+      <div style={styles.loginContainer} className="admin-login-box fade-in">
         <div
           className="brand-logo-container"
           style={{ justifyContent: 'center', marginBottom: '24px' }}
@@ -682,8 +867,17 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
+
           <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: '16px' }}>
             <Lock size={18} /> Access Dashboard
+          </button>
+
+          <button
+            type="button"
+            onClick={() => { setIsForgotMode(true); setForgotMsg(null); }}
+            style={{ border: 'none', background: 'none', color: 'var(--primary)', fontSize: '0.8rem', fontWeight: '700', cursor: 'pointer', marginTop: '16px' }}
+          >
+            Forgot Password?
           </button>
         </form>
       </div>
@@ -739,6 +933,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
         >
           Gallery Manager
         </button>
+
         <button
           onClick={() => {
             setActiveTab('whatsapp');
@@ -758,6 +953,24 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
           }}
         >
           WhatsApp Bot
+        </button>
+
+        <button
+          onClick={() => setActiveTab('security')}
+          style={{
+            border: 'none',
+            background: 'none',
+            fontSize: '1rem',
+            fontWeight: '700',
+            color: activeTab === 'security' ? 'var(--primary)' : 'var(--text-muted)',
+            padding: '12px 16px',
+            borderBottom: activeTab === 'security' ? '3px solid var(--primary)' : '3px solid transparent',
+            cursor: 'pointer',
+            fontFamily: 'var(--font-heading)',
+            transition: 'var(--transition-fast)'
+          }}
+        >
+          Security & Password
         </button>
       </div>
 
@@ -1198,6 +1411,73 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {activeTab === 'security' && (
+        <div style={{ maxWidth: '500px', margin: '0 auto', backgroundColor: '#fff', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-lg)', padding: '32px', boxShadow: 'var(--shadow-md)' }}>
+          <h3 style={{ fontSize: '1.25rem', marginBottom: '8px', color: 'var(--bg-dark)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Key size={20} color="var(--primary)" /> Change Admin Password
+          </h3>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '24px', lineHeight: '1.4' }}>
+            Update your admin console login password. The new password will take effect immediately.
+          </p>
+
+          {changeMsg && (
+            <div style={{
+              color: changeMsg.isError ? '#ef4444' : '#10b981',
+              backgroundColor: changeMsg.isError ? '#fee2e2' : '#d1fae5',
+              padding: '12px 16px',
+              borderRadius: '6px',
+              fontSize: '0.85rem',
+              marginBottom: '20px',
+              fontWeight: '600'
+            }}>
+              {changeMsg.text}
+            </div>
+          )}
+
+          <form onSubmit={handleChangePasswordSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <label style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Current Password</label>
+              <input
+                type="password"
+                placeholder="Enter current admin password"
+                value={changeCurrentPass}
+                onChange={(e) => setChangeCurrentPass(e.target.value)}
+                style={{ ...styles.input, marginBottom: 0 }}
+                required
+              />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <label style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>New Password</label>
+              <input
+                type="password"
+                placeholder="Enter new password"
+                value={changeNewPass}
+                onChange={(e) => setChangeNewPass(e.target.value)}
+                style={{ ...styles.input, marginBottom: 0 }}
+                required
+              />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <label style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Confirm New Password</label>
+              <input
+                type="password"
+                placeholder="Re-enter new password"
+                value={changeConfirmPass}
+                onChange={(e) => setChangeConfirmPass(e.target.value)}
+                style={{ ...styles.input, marginBottom: 0 }}
+                required
+              />
+            </div>
+
+            <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: '8px' }}>
+              <ShieldCheck size={18} /> Update Password
+            </button>
+          </form>
         </div>
       )}
     </div>
