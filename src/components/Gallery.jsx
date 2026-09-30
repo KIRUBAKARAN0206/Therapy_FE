@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 
 import { getApiBase, formatImageUrl, fetchCloudGallery } from '../utils/api';
+import { getIndexedDbPhotos, saveIndexedDbPhotos } from '../utils/dbStorage';
 
 // Local WebP Assets
 import clinicalRehabImg from '../assets/clinical_rehab.webp';
@@ -182,28 +183,37 @@ export default function Gallery() {
         try {
           const response = await fetch(`${apiBase}/api/gallery`);
           if (response.ok) {
-            backendData = await response.json();
-            backendData = backendData.map(p => ({
-              ...p,
-              url: formatImageUrl(p.url)
-            }));
-            fetchedFromBackend = true;
+            const json = await response.json();
+            if (Array.isArray(json)) {
+              backendData = json.map(p => ({
+                ...p,
+                url: formatImageUrl(p.url)
+              }));
+              fetchedFromBackend = true;
+            }
           }
         } catch (apiError) {
           console.error("Backend fetch failed, relying on local storage", apiError);
         }
 
-        const localData = JSON.parse(localStorage.getItem('gallery_photos') || '[]')
-          .map(p => ({ ...p, url: formatImageUrl(p.url) }));
+        const idbData = await getIndexedDbPhotos();
+        const localData = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
+        
+        // Merge IndexedDB & localStorage photos without duplicates
+        const combinedMap = new Map();
+        [...idbData, ...localData].forEach(p => {
+          if (p && p.id) {
+            combinedMap.set(p.id, { ...p, url: formatImageUrl(p.url) });
+          }
+        });
+        const combinedLocal = Array.from(combinedMap.values());
 
         let finalPhotos = backendData;
 
         if (fetchedFromBackend) {
-          // Identify local photos not yet saved in PostgreSQL DB
-          const missingInDb = localData.filter(lp => !backendData.some(bp => bp.id === lp.id));
+          const missingInDb = combinedLocal.filter(lp => !backendData.some(bp => bp.id === lp.id));
           if (missingInDb.length > 0) {
             finalPhotos = [...backendData, ...missingInDb];
-            // Auto-sync missing photos into PostgreSQL DB
             missingInDb.forEach(async (photo) => {
               try {
                 await fetch(`${apiBase}/api/gallery`, {
@@ -218,12 +228,13 @@ export default function Gallery() {
           }
         } else {
           const cloudData = await fetchCloudGallery();
-          finalPhotos = (cloudData && cloudData.length > 0) ? cloudData : localData;
+          finalPhotos = (cloudData && cloudData.length > 0) ? cloudData : (combinedLocal.length > 0 ? combinedLocal : []);
         }
 
         setCustomPhotos(finalPhotos);
+        saveIndexedDbPhotos(finalPhotos);
         try {
-          localStorage.setItem('gallery_photos', JSON.stringify(finalPhotos));
+          localStorage.setItem('gallery_photos', JSON.stringify(finalPhotos.slice(0, 5)));
         } catch(e) {}
       } catch (e) {
         console.error("Failed to parse gallery photos", e);
