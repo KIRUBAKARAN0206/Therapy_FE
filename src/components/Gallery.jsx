@@ -178,8 +178,8 @@ export default function Gallery() {
       try {
         let backendData = [];
         let fetchedFromBackend = false;
+        const apiBase = getApiBase();
         try {
-          const apiBase = getApiBase();
           const response = await fetch(`${apiBase}/api/gallery`);
           if (response.ok) {
             backendData = await response.json();
@@ -193,27 +193,38 @@ export default function Gallery() {
           console.error("Backend fetch failed, relying on local storage", apiError);
         }
 
-        if (fetchedFromBackend && backendData.length > 0) {
-          // If local backend returned data, update cloud backup too
-        } else {
-          // Fall back to Cloud Store for live site
-          const cloudData = await fetchCloudGallery();
-          if (cloudData && cloudData.length > 0) {
-            backendData = cloudData;
-            fetchedFromBackend = true;
-          }
-        }
+        const localData = JSON.parse(localStorage.getItem('gallery_photos') || '[]')
+          .map(p => ({ ...p, url: formatImageUrl(p.url) }));
+
+        let finalPhotos = backendData;
 
         if (fetchedFromBackend) {
-          setCustomPhotos(backendData);
-          try {
-            localStorage.setItem('gallery_photos', JSON.stringify(backendData));
-          } catch(e) {}
+          // Identify local photos not yet saved in PostgreSQL DB
+          const missingInDb = localData.filter(lp => !backendData.some(bp => bp.id === lp.id));
+          if (missingInDb.length > 0) {
+            finalPhotos = [...backendData, ...missingInDb];
+            // Auto-sync missing photos into PostgreSQL DB
+            missingInDb.forEach(async (photo) => {
+              try {
+                await fetch(`${apiBase}/api/gallery`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(photo)
+                });
+              } catch (e) {
+                console.warn("Auto sync photo to DB failed:", photo.id, e);
+              }
+            });
+          }
         } else {
-          // Restore legacy photos from localStorage if backend is offline
-          const localData = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
-          setCustomPhotos(localData.map(p => ({ ...p, url: formatImageUrl(p.url) })));
+          const cloudData = await fetchCloudGallery();
+          finalPhotos = (cloudData && cloudData.length > 0) ? cloudData : localData;
         }
+
+        setCustomPhotos(finalPhotos);
+        try {
+          localStorage.setItem('gallery_photos', JSON.stringify(finalPhotos));
+        } catch(e) {}
       } catch (e) {
         console.error("Failed to parse gallery photos", e);
       }
