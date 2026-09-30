@@ -338,26 +338,12 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
         });
         const combinedLocal = Array.from(combinedMap.values());
 
-        let cloudData = [];
-        if (!fetchedFromBackend || backendData.length === 0) {
-          const fetchedCloud = await fetchCloudGallery();
-          if (Array.isArray(fetchedCloud)) {
-            cloudData = fetchedCloud;
-          }
-        }
-
-        // Merge all sources (backend DB + Cloud Store + Local IndexedDB) cleanly by unique ID
-        const mergedMap = new Map();
-        [...backendData, ...cloudData, ...combinedLocal].forEach(p => {
-          if (p && p.id) {
-            mergedMap.set(String(p.id), { ...p, url: formatImageUrl(p.url) });
-          }
-        });
-        const finalPhotos = Array.from(mergedMap.values());
+        let finalPhotos = backendData;
 
         if (fetchedFromBackend) {
           const missingInDb = combinedLocal.filter(lp => !backendData.some(bp => bp.id === lp.id));
           if (missingInDb.length > 0) {
+            finalPhotos = [...backendData, ...missingInDb];
             missingInDb.forEach(async (photo) => {
               try {
                 await fetch(`${API_BASE}/api/gallery`, {
@@ -370,11 +356,12 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
               }
             });
           }
+        } else {
+          finalPhotos = combinedLocal;
         }
 
         setGalleryPhotos(finalPhotos);
         saveIndexedDbPhotos(finalPhotos);
-        saveCloudGallery(finalPhotos);
         try {
           localStorage.setItem('gallery_photos', JSON.stringify(finalPhotos.slice(0, 5)));
         } catch(e) {}
