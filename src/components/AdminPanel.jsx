@@ -372,7 +372,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
         const img = new window.Image();
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          const maxDim = 1200; // max resolution preserving crisp clarity
+          const maxDim = 800; // max resolution preserving crisp clarity while enabling instant cloud sync
           let width = img.width;
           let height = img.height;
 
@@ -396,17 +396,17 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
           ctx.imageSmoothingQuality = 'high';
           ctx.drawImage(img, 0, 0, width, height);
 
-          // Iterative WebP quality compression targeting optimal file size (~250-350KB max)
-          let quality = 0.82;
+          // WebP quality compression targeting compact size (~60-80KB max) for instant live cloud sync
+          let quality = 0.72;
           let resultUrl = canvas.toDataURL('image/webp', quality);
 
-          while (resultUrl.length > 350 * 1024 && quality > 0.3) {
-            quality -= 0.12;
+          while (resultUrl.length > 80 * 1024 && quality > 0.25) {
+            quality -= 0.10;
             resultUrl = canvas.toDataURL('image/webp', quality);
           }
 
           if (!resultUrl || !resultUrl.startsWith('data:image/webp')) {
-            resultUrl = canvas.toDataURL('image/jpeg', 0.8);
+            resultUrl = canvas.toDataURL('image/jpeg', 0.7);
           }
 
           resolve(resultUrl);

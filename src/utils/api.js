@@ -54,14 +54,28 @@ export const fetchCloudGallery = async () => {
 
 export const saveCloudGallery = async (photos) => {
   try {
-    await fetch(CLOUD_API_URL, {
+    if (!Array.isArray(photos) || photos.length === 0) return;
+    // Keep top 15 photos formatted cleanly for cloud JSON sync
+    const compactPhotos = photos.slice(0, 15).map(p => ({
+      id: String(p.id),
+      title: String(p.title || 'Untitled'),
+      category: String(p.category || 'General'),
+      url: String(p.url || '')
+    }));
+
+    const res = await fetch(CLOUD_API_URL, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        name: 'Therapy Universe Gallery',
-        data: { photos }
+        name: 'Therapy Universe Live Gallery',
+        data: { photos: compactPhotos }
       })
     });
+    if (res.ok) {
+      console.log("✅ Live Cloud Gallery synced successfully.");
+    } else {
+      console.warn("Live Cloud Gallery sync HTTP error status:", res.status);
+    }
   } catch (e) {
     console.warn("Cloud gallery save error:", e);
   }
