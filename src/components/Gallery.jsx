@@ -170,23 +170,86 @@ export default function Gallery() {
   useEffect(() => {
     const fetchGallery = async () => {
       try {
+        let backendData = [];
+        let fetchedFromBackend = false;
         const apiBase = getApiBase();
-        const response = await fetch(`${apiBase}/api/gallery`);
-        if (response.ok) {
-          const json = await response.json();
-          if (Array.isArray(json)) {
-            const backendData = json.map(p => ({
-              ...p,
-              url: formatImageUrl(p.url)
-            }));
-            setCustomPhotos(backendData);
+        try {
+          const response = await fetch(`${apiBase}/api/gallery`);
+          if (response.ok) {
+            const json = await response.json();
+            if (Array.isArray(json)) {
+              backendData = json.map(p => ({
+                ...p,
+                url: formatImageUrl(p.url)
+              }));
+              fetchedFromBackend = true;
+            }
           }
+        } catch (apiError) {
+          console.error("Backend fetch failed, relying on local storage", apiError);
         }
+
+        const idbData = await getIndexedDbPhotos();
+        const localData = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
+        
+        // Merge IndexedDB & localStorage photos without duplicates
+        const combinedMap = new Map();
+        [...idbData, ...localData].forEach(p => {
+          if (p && p.id) {
+            combinedMap.set(p.id, { ...p, url: formatImageUrl(p.url) });
+          }
+        });
+        const combinedLocal = Array.from(combinedMap.values());
+
+        let finalPhotos = backendData;
+
+        if (fetchedFromBackend) {
+          const missingInDb = combinedLocal.filter(lp => !backendData.some(bp => bp.id === lp.id));
+          if (missingInDb.length > 0) {
+            finalPhotos = [...backendData, ...missingInDb];
+            missingInDb.forEach(async (photo) => {
+              try {
+                await fetch(`${apiBase}/api/gallery`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(photo)
+                });
+              } catch (e) {
+                console.warn("Auto sync photo to DB failed:", photo.id, e);
+              }
+            });
+          }
+        } else {
+          finalPhotos = combinedLocal;
+        }
+
+        setCustomPhotos(prev => {
+          if (JSON.stringify(prev) !== JSON.stringify(finalPhotos)) {
+            return finalPhotos;
+          }
+          return prev;
+        });
+        saveIndexedDbPhotos(finalPhotos);
+        try {
+          localStorage.setItem('gallery_photos', JSON.stringify(finalPhotos.slice(0, 5)));
+        } catch(e) {}
       } catch (e) {
         console.error("Backend fetch failed", e);
       }
     };
+
     fetchGallery();
+
+    // Live real-time sync: Poll backend & storage every 3 seconds so new gallery images update automatically without page refresh!
+    const pollInterval = setInterval(fetchGallery, 3000);
+
+    const handleGalleryUpdate = () => {
+      fetchGallery();
+    };
+
+    window.addEventListener('storage', handleGalleryUpdate);
+    window.addEventListener('gallery_updated', handleGalleryUpdate);
+    window.addEventListener('focus', handleGalleryUpdate);
 
     const savedLikes = localStorage.getItem('clinic_gallery_likes');
     if (savedLikes) {
@@ -199,7 +262,13 @@ export default function Gallery() {
 
     // Lazy load / Parallax Hero Banner
     const hero = heroRef.current;
-    if (!hero) return;
+    if (!hero) return () => {
+      clearInterval(pollInterval);
+      window.removeEventListener('storage', handleGalleryUpdate);
+      window.removeEventListener('gallery_updated', handleGalleryUpdate);
+      window.removeEventListener('focus', handleGalleryUpdate);
+    };
+
     hero.style.backgroundImage = `url("${recoveryBannerImg}")`;
 
     const handleScroll = () => {
@@ -208,6 +277,10 @@ export default function Gallery() {
     };
     window.addEventListener('scroll', handleScroll);
     return () => {
+      clearInterval(pollInterval);
+      window.removeEventListener('storage', handleGalleryUpdate);
+      window.removeEventListener('gallery_updated', handleGalleryUpdate);
+      window.removeEventListener('focus', handleGalleryUpdate);
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);

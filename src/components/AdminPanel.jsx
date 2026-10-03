@@ -447,7 +447,20 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
         console.warn("Backend upload network error, saving to local & cloud gallery storage", apiErr);
       }
 
-      setGalleryPhotos(prev => [savedPhoto, ...prev.filter(p => p.id !== savedPhoto.id)]);
+      // Always update State, IndexedDB, LocalStorage & Cloud Store so uploaded images are NEVER lost!
+      setGalleryPhotos(prev => {
+        const updated = [savedPhoto, ...prev.filter(p => p.id !== savedPhoto.id)];
+        saveSingleIndexedDbPhoto(savedPhoto);
+        saveIndexedDbPhotos(updated);
+        saveCloudGallery(updated);
+        try {
+          localStorage.setItem('gallery_photos', JSON.stringify(updated.slice(0, 5)));
+        } catch (lsErr) {
+          console.warn("Failed to update localStorage gallery photos", lsErr);
+        }
+        window.dispatchEvent(new CustomEvent('gallery_updated'));
+        return updated;
+      });
 
       setNewPhotoTitle('');
       setCustomCategoryName('');
@@ -473,6 +486,14 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
       
       const updated = galleryPhotos.filter(p => p.id !== id);
       setGalleryPhotos(updated);
+      deleteIndexedDbPhoto(id);
+      saveIndexedDbPhotos(updated);
+      saveCloudGallery(updated);
+
+      try {
+        localStorage.setItem('gallery_photos', JSON.stringify(updated.slice(0, 5)));
+      } catch (lsErr) {}
+      window.dispatchEvent(new CustomEvent('gallery_updated'));
     }
   };
 
