@@ -71,14 +71,7 @@ function ImageWithLoader({ src, alt, className, style }) {
 
 export default function Gallery() {
   const [activeFilter, setActiveFilter] = useState('All');
-  const [customPhotos, setCustomPhotos] = useState(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
-      return saved.map(p => ({ ...p, url: formatImageUrl(p.url) }));
-    } catch (e) {
-      return [];
-    }
-  });
+  const [customPhotos, setCustomPhotos] = useState([]);
   const [selectedPhotoIdx, setSelectedPhotoIdx] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [viewMode, setViewMode] = useState('folders'); // Default to folder view so photos stay neatly organized in category folders
@@ -177,66 +170,20 @@ export default function Gallery() {
   useEffect(() => {
     const fetchGallery = async () => {
       try {
-        let backendData = [];
-        let fetchedFromBackend = false;
         const apiBase = getApiBase();
-        try {
-          const response = await fetch(`${apiBase}/api/gallery`);
-          if (response.ok) {
-            const json = await response.json();
-            if (Array.isArray(json)) {
-              backendData = json.map(p => ({
-                ...p,
-                url: formatImageUrl(p.url)
-              }));
-              fetchedFromBackend = true;
-            }
+        const response = await fetch(`${apiBase}/api/gallery`);
+        if (response.ok) {
+          const json = await response.json();
+          if (Array.isArray(json)) {
+            const backendData = json.map(p => ({
+              ...p,
+              url: formatImageUrl(p.url)
+            }));
+            setCustomPhotos(backendData);
           }
-        } catch (apiError) {
-          console.error("Backend fetch failed, relying on local storage", apiError);
         }
-
-        const idbData = await getIndexedDbPhotos();
-        const localData = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
-        
-        // Merge IndexedDB & localStorage photos without duplicates
-        const combinedMap = new Map();
-        [...idbData, ...localData].forEach(p => {
-          if (p && p.id) {
-            combinedMap.set(p.id, { ...p, url: formatImageUrl(p.url) });
-          }
-        });
-        const combinedLocal = Array.from(combinedMap.values());
-
-        let finalPhotos = backendData;
-
-        if (fetchedFromBackend) {
-          const missingInDb = combinedLocal.filter(lp => !backendData.some(bp => bp.id === lp.id));
-          if (missingInDb.length > 0) {
-            finalPhotos = [...backendData, ...missingInDb];
-            missingInDb.forEach(async (photo) => {
-              try {
-                await fetch(`${apiBase}/api/gallery`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(photo)
-                });
-              } catch (e) {
-                console.warn("Auto sync photo to DB failed:", photo.id, e);
-              }
-            });
-          }
-        } else {
-          finalPhotos = combinedLocal;
-        }
-
-        setCustomPhotos(finalPhotos);
-        saveIndexedDbPhotos(finalPhotos);
-        try {
-          localStorage.setItem('gallery_photos', JSON.stringify(finalPhotos.slice(0, 5)));
-        } catch(e) {}
       } catch (e) {
-        console.error("Failed to parse gallery photos", e);
+        console.error("Backend fetch failed", e);
       }
     };
     fetchGallery();

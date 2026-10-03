@@ -40,14 +40,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
 
   // Gallery management state
   const [activeTab, setActiveTab] = useState('bookings'); // 'bookings' or 'gallery'
-  const [galleryPhotos, setGalleryPhotos] = useState(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
-      return saved.map(p => ({ ...p, url: formatImageUrl(p.url) }));
-    } catch (e) {
-      return [];
-    }
-  });
+  const [galleryPhotos, setGalleryPhotos] = useState([]);
   const [newPhotoTitle, setNewPhotoTitle] = useState('');
   const [newPhotoCategory, setNewPhotoCategory] = useState('Rehabilitation Therapy');
   const [customCategoryName, setCustomCategoryName] = useState('');
@@ -308,65 +301,19 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
   useEffect(() => {
     const fetchGallery = async () => {
       try {
-        let backendData = [];
-        let fetchedFromBackend = false;
-        try {
-          const response = await fetch(`${API_BASE}/api/gallery`);
-          if (response.ok) {
-            const json = await response.json();
-            if (Array.isArray(json)) {
-              backendData = json.map(p => ({
-                ...p,
-                url: formatImageUrl(p.url)
-              }));
-              fetchedFromBackend = true;
-            }
+        const response = await fetch(`${API_BASE}/api/gallery`);
+        if (response.ok) {
+          const json = await response.json();
+          if (Array.isArray(json)) {
+            const backendData = json.map(p => ({
+              ...p,
+              url: formatImageUrl(p.url)
+            }));
+            setGalleryPhotos(backendData);
           }
-        } catch (apiError) {
-          console.error("Backend fetch failed, relying on local storage", apiError);
         }
-
-        const idbData = await getIndexedDbPhotos();
-        const localData = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
-        
-        // Merge IndexedDB & localStorage photos without duplicates
-        const combinedMap = new Map();
-        [...idbData, ...localData].forEach(p => {
-          if (p && p.id) {
-            combinedMap.set(p.id, { ...p, url: formatImageUrl(p.url) });
-          }
-        });
-        const combinedLocal = Array.from(combinedMap.values());
-
-        let finalPhotos = backendData;
-
-        if (fetchedFromBackend) {
-          const missingInDb = combinedLocal.filter(lp => !backendData.some(bp => bp.id === lp.id));
-          if (missingInDb.length > 0) {
-            finalPhotos = [...backendData, ...missingInDb];
-            missingInDb.forEach(async (photo) => {
-              try {
-                await fetch(`${API_BASE}/api/gallery`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(photo)
-                });
-              } catch (e) {
-                console.warn("Auto sync photo to DB failed:", photo.id, e);
-              }
-            });
-          }
-        } else {
-          finalPhotos = combinedLocal;
-        }
-
-        setGalleryPhotos(finalPhotos);
-        saveIndexedDbPhotos(finalPhotos);
-        try {
-          localStorage.setItem('gallery_photos', JSON.stringify(finalPhotos.slice(0, 5)));
-        } catch(e) {}
       } catch (e) {
-        console.error("Failed to parse gallery photos", e);
+        console.error("Backend fetch failed", e);
       }
     };
     fetchGallery();
@@ -500,19 +447,7 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
         console.warn("Backend upload network error, saving to local & cloud gallery storage", apiErr);
       }
 
-      // Always update State, IndexedDB, LocalStorage & Cloud Store so uploaded images are NEVER lost!
-      setGalleryPhotos(prev => {
-        const updated = [savedPhoto, ...prev.filter(p => p.id !== savedPhoto.id)];
-        saveSingleIndexedDbPhoto(savedPhoto);
-        saveIndexedDbPhotos(updated);
-        saveCloudGallery(updated);
-        try {
-          localStorage.setItem('gallery_photos', JSON.stringify(updated.slice(0, 5)));
-        } catch (lsErr) {
-          console.warn("Failed to update localStorage gallery photos", lsErr);
-        }
-        return updated;
-      });
+      setGalleryPhotos(prev => [savedPhoto, ...prev.filter(p => p.id !== savedPhoto.id)]);
 
       setNewPhotoTitle('');
       setCustomCategoryName('');
@@ -538,13 +473,6 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
       
       const updated = galleryPhotos.filter(p => p.id !== id);
       setGalleryPhotos(updated);
-      deleteIndexedDbPhoto(id);
-      saveIndexedDbPhotos(updated);
-      saveCloudGallery(updated);
-
-      try {
-        localStorage.setItem('gallery_photos', JSON.stringify(updated.slice(0, 5)));
-      } catch (lsErr) {}
     }
   };
 
