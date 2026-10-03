@@ -2517,4 +2517,80 @@ body {
   }
 }
 
+/* Universal Mobile Device Responsiveness (All Mobile Types 320px - 768px) */
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+  
+  /* Touch friendly targets */
+  button, a, input, select, textarea {
+    touch-action: manipulation;
+  }
+  
+  /* Image auto scaling */
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Text heading scaling */
+  h1 {
+    font-size: clamp(1.75rem, 6vw, 2.5rem) !important;
+    line-height: 1.2 !important;
+  }
+  h2 {
+    font-size: clamp(1.4rem, 5vw, 2rem) !important;
+    line-height: 1.25 !important;
+  }
+  h3 {
+    font-size: clamp(1.15rem, 4vw, 1.5rem) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+  
+  .section {
+    padding: 32px 12px !important;
+  }
+  
+  /* Full width stacked buttons on small mobile */
+  .btn-primary, .btn-secondary {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 12px 18px !important;
+    font-size: 0.92rem !important;
+  }
+  
+  /* Inputs mobile padding */
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  input[type="password"],
+  select,
+  textarea {
+    font-size: 16px !important; /* Prevents iOS auto-zoom on input focus */
+    padding: 12px 14px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  /* Compact styling for small phones (e.g., iPhone SE, Galaxy Fold portrait) */
+  html {
+    font-size: 14px;
+  }
+  
+  .section-tag {
+    font-size: 0.75rem !important;
+    padding: 4px 10px !important;
+  }
+}
+
+
 
