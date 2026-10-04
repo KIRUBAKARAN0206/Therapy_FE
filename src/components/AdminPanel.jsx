@@ -40,7 +40,14 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
 
   // Gallery management state
   const [activeTab, setActiveTab] = useState('bookings'); // 'bookings' or 'gallery'
-  const [galleryPhotos, setGalleryPhotos] = useState([]);
+  const [galleryPhotos, setGalleryPhotos] = useState(() => {
+    try {
+      const local = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
+      return Array.isArray(local) ? local.map(p => ({ ...p, url: formatImageUrl(p.url) })) : [];
+    } catch (e) {
+      return [];
+    }
+  });
   const [newPhotoTitle, setNewPhotoTitle] = useState('');
   const [newPhotoCategory, setNewPhotoCategory] = useState('Rehabilitation Therapy');
   const [customCategoryName, setCustomCategoryName] = useState('');
@@ -299,7 +306,28 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
 
   // Gallery Photos useEffect & Handlers
   useEffect(() => {
+    const loadFromLocalCache = async () => {
+      try {
+        const idbData = await getIndexedDbPhotos();
+        const localData = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
+        const combinedMap = new Map();
+        [...idbData, ...localData].forEach(p => {
+          if (p && p.id) {
+            combinedMap.set(p.id, { ...p, url: formatImageUrl(p.url) });
+          }
+        });
+        const combinedLocal = Array.from(combinedMap.values());
+        if (combinedLocal.length > 0) {
+          setGalleryPhotos(combinedLocal);
+        }
+        return combinedLocal;
+      } catch (e) {
+        return [];
+      }
+    };
+
     const fetchGallery = async () => {
+      const combinedLocal = await loadFromLocalCache();
       try {
         const response = await fetch(`${API_BASE}/api/gallery`);
         if (response.ok) {
@@ -309,13 +337,25 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
               ...p,
               url: formatImageUrl(p.url)
             }));
-            setGalleryPhotos(backendData);
+
+            const combinedMap = new Map();
+            combinedLocal.forEach(p => { if (p && p.id) combinedMap.set(p.id, p); });
+            backendData.forEach(p => { if (p && p.id) combinedMap.set(p.id, p); });
+            const finalPhotos = Array.from(combinedMap.values());
+
+            setGalleryPhotos(finalPhotos);
+            saveIndexedDbPhotos(finalPhotos);
+            try {
+              localStorage.setItem('gallery_photos', JSON.stringify(finalPhotos.slice(0, 10)));
+            } catch (lsErr) {}
           }
         }
       } catch (e) {
         console.error("Backend fetch failed", e);
       }
     };
+
+    loadFromLocalCache();
     fetchGallery();
   }, [API_BASE]);
 
@@ -428,39 +468,50 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
         url: finalDataUrl
       };
 
-      let savedPhoto = newPhoto;
-      try {
-        const response = await fetch(`${API_BASE}/api/gallery`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newPhoto)
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          savedPhoto = data.photo || newPhoto;
-          if (savedPhoto.url && savedPhoto.url.startsWith('/')) {
-            savedPhoto.url = `${API_BASE}${savedPhoto.url}`;
-          }
-        }
-      } catch (apiErr) {
-        console.warn("Backend upload network error, saving to local & cloud gallery storage", apiErr);
-      }
-
-      // Always update State, IndexedDB, LocalStorage & Cloud Store so uploaded images are NEVER lost!
+      // 1. Instantly update State, IndexedDB, LocalStorage & broadcast events (0ms latency!)
+      let updatedPhotos = [];
       setGalleryPhotos(prev => {
-        const updated = [savedPhoto, ...prev.filter(p => p.id !== savedPhoto.id)];
-        saveSingleIndexedDbPhoto(savedPhoto);
-        saveIndexedDbPhotos(updated);
-        saveCloudGallery(updated);
+        updatedPhotos = [newPhoto, ...prev.filter(p => p.id !== newPhoto.id)];
+        saveSingleIndexedDbPhoto(newPhoto);
+        saveIndexedDbPhotos(updatedPhotos);
+        saveCloudGallery(updatedPhotos);
         try {
-          localStorage.setItem('gallery_photos', JSON.stringify(updated.slice(0, 5)));
+          localStorage.setItem('gallery_photos', JSON.stringify(updatedPhotos.slice(0, 10)));
         } catch (lsErr) {
           console.warn("Failed to update localStorage gallery photos", lsErr);
         }
-        window.dispatchEvent(new CustomEvent('gallery_updated'));
-        return updated;
+
+        // Broadcast to Gallery component in same tab & across tabs!
+        window.dispatchEvent(new CustomEvent('gallery_updated', { detail: updatedPhotos }));
+        if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+          try {
+            const bc = new BroadcastChannel('therapy_gallery_channel');
+            bc.postMessage({ type: 'GALLERY_UPDATED', photos: updatedPhotos });
+            bc.close();
+          } catch (e) {}
+        }
+        return updatedPhotos;
       });
+
+      // 2. Persist to backend DB in background asynchronously
+      fetch(`${API_BASE}/api/gallery`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newPhoto)
+      }).then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data && data.photo && data.photo.url && data.photo.url !== newPhoto.url) {
+            const serverPhoto = { ...newPhoto, url: formatImageUrl(data.photo.url) };
+            setGalleryPhotos(prev => {
+              const synced = prev.map(p => p.id === serverPhoto.id ? serverPhoto : p);
+              saveIndexedDbPhotos(synced);
+              return synced;
+            });
+          }
+        })
+        .catch(apiErr => {
+          console.warn("Backend upload network error, saved locally", apiErr);
+        });
 
       setNewPhotoTitle('');
       setCustomCategoryName('');
@@ -478,12 +529,6 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
 
   const deletePhoto = async (id) => {
     if (window.confirm("Are you sure you want to delete this photo from the gallery?")) {
-      try {
-        await fetch(`${API_BASE}/api/gallery/${id}`, {
-          method: 'DELETE'
-        });
-      } catch (e) {}
-      
       const updated = galleryPhotos.filter(p => p.id !== id);
       setGalleryPhotos(updated);
       deleteIndexedDbPhoto(id);
@@ -491,9 +536,23 @@ export default function AdminPanel({ bookings, onUpdateBookings }) {
       saveCloudGallery(updated);
 
       try {
-        localStorage.setItem('gallery_photos', JSON.stringify(updated.slice(0, 5)));
+        localStorage.setItem('gallery_photos', JSON.stringify(updated.slice(0, 10)));
       } catch (lsErr) {}
-      window.dispatchEvent(new CustomEvent('gallery_updated'));
+
+      window.dispatchEvent(new CustomEvent('gallery_updated', { detail: updated }));
+      if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+        try {
+          const bc = new BroadcastChannel('therapy_gallery_channel');
+          bc.postMessage({ type: 'GALLERY_UPDATED', photos: updated });
+          bc.close();
+        } catch (e) {}
+      }
+
+      try {
+        await fetch(`${API_BASE}/api/gallery/${id}`, {
+          method: 'DELETE'
+        });
+      } catch (e) {}
     }
   };
 

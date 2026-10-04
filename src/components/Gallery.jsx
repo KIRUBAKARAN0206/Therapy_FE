@@ -71,7 +71,14 @@ function ImageWithLoader({ src, alt, className, style }) {
 
 export default function Gallery() {
   const [activeFilter, setActiveFilter] = useState('All');
-  const [customPhotos, setCustomPhotos] = useState([]);
+  const [customPhotos, setCustomPhotos] = useState(() => {
+    try {
+      const local = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
+      return Array.isArray(local) ? local.map(p => ({ ...p, url: formatImageUrl(p.url) })) : [];
+    } catch (e) {
+      return [];
+    }
+  });
   const [selectedPhotoIdx, setSelectedPhotoIdx] = useState(null);
   const [selectedFolder, setSelectedFolder] = useState(null);
   const [viewMode, setViewMode] = useState('folders'); // Default to folder view so photos stay neatly organized in category folders
@@ -168,7 +175,37 @@ export default function Gallery() {
 
   // Load custom photos and likes
   useEffect(() => {
+    const loadFromLocalCache = async () => {
+      try {
+        const idbData = await getIndexedDbPhotos();
+        const localData = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
+        
+        const combinedMap = new Map();
+        [...idbData, ...localData].forEach(p => {
+          if (p && p.id) {
+            combinedMap.set(p.id, { ...p, url: formatImageUrl(p.url) });
+          }
+        });
+        const combinedLocal = Array.from(combinedMap.values());
+        if (combinedLocal.length > 0) {
+          setCustomPhotos(prev => {
+            if (JSON.stringify(prev) !== JSON.stringify(combinedLocal)) {
+              return combinedLocal;
+            }
+            return prev;
+          });
+        }
+        return combinedLocal;
+      } catch (e) {
+        return [];
+      }
+    };
+
     const fetchGallery = async () => {
+      // 1. Instant rendering from local cache
+      const combinedLocal = await loadFromLocalCache();
+
+      // 2. Silent backend sync in background
       try {
         let backendData = [];
         let fetchedFromBackend = false;
@@ -189,24 +226,17 @@ export default function Gallery() {
           console.error("Backend fetch failed, relying on local storage", apiError);
         }
 
-        const idbData = await getIndexedDbPhotos();
-        const localData = JSON.parse(localStorage.getItem('gallery_photos') || '[]');
-        
-        // Merge IndexedDB & localStorage photos without duplicates
-        const combinedMap = new Map();
-        [...idbData, ...localData].forEach(p => {
-          if (p && p.id) {
-            combinedMap.set(p.id, { ...p, url: formatImageUrl(p.url) });
-          }
-        });
-        const combinedLocal = Array.from(combinedMap.values());
-
-        let finalPhotos = backendData;
+        let finalPhotos = combinedLocal;
 
         if (fetchedFromBackend) {
+          // Merge backend & local photos without duplicates
+          const combinedMap = new Map();
+          combinedLocal.forEach(p => { if (p && p.id) combinedMap.set(p.id, p); });
+          backendData.forEach(p => { if (p && p.id) combinedMap.set(p.id, p); });
+          finalPhotos = Array.from(combinedMap.values());
+
           const missingInDb = combinedLocal.filter(lp => !backendData.some(bp => bp.id === lp.id));
           if (missingInDb.length > 0) {
-            finalPhotos = [...backendData, ...missingInDb];
             missingInDb.forEach(async (photo) => {
               try {
                 await fetch(`${apiBase}/api/gallery`, {
@@ -219,8 +249,6 @@ export default function Gallery() {
               }
             });
           }
-        } else {
-          finalPhotos = combinedLocal;
         }
 
         setCustomPhotos(prev => {
@@ -231,25 +259,56 @@ export default function Gallery() {
         });
         saveIndexedDbPhotos(finalPhotos);
         try {
-          localStorage.setItem('gallery_photos', JSON.stringify(finalPhotos.slice(0, 5)));
+          localStorage.setItem('gallery_photos', JSON.stringify(finalPhotos.slice(0, 10)));
         } catch(e) {}
       } catch (e) {
-        console.error("Backend fetch failed", e);
+        console.error("Fetch gallery error", e);
       }
     };
 
+    // Load local cache immediately on mount (0ms delay)
+    loadFromLocalCache();
     fetchGallery();
 
-    // Live real-time sync: Poll backend & storage every 3 seconds so new gallery images update automatically without page refresh!
-    const pollInterval = setInterval(fetchGallery, 3000);
+    // Poll backend silently in background every 5 seconds
+    const pollInterval = setInterval(fetchGallery, 5000);
 
-    const handleGalleryUpdate = () => {
-      fetchGallery();
+    const handleGalleryUpdate = (evt) => {
+      if (evt && evt.detail && Array.isArray(evt.detail)) {
+        const formatted = evt.detail.map(p => ({ ...p, url: formatImageUrl(p.url) }));
+        setCustomPhotos(formatted);
+        saveIndexedDbPhotos(formatted);
+        try {
+          localStorage.setItem('gallery_photos', JSON.stringify(formatted.slice(0, 10)));
+        } catch(e) {}
+      } else {
+        loadFromLocalCache().then(() => fetchGallery());
+      }
     };
 
     window.addEventListener('storage', handleGalleryUpdate);
     window.addEventListener('gallery_updated', handleGalleryUpdate);
     window.addEventListener('focus', handleGalleryUpdate);
+
+    // BroadcastChannel for instant zero-latency cross-tab communication
+    let bc;
+    if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+      try {
+        bc = new BroadcastChannel('therapy_gallery_channel');
+        bc.onmessage = (msg) => {
+          if (msg.data && msg.data.type === 'GALLERY_UPDATED' && Array.isArray(msg.data.photos)) {
+            const formatted = msg.data.photos.map(p => ({ ...p, url: formatImageUrl(p.url) }));
+            setCustomPhotos(formatted);
+            saveIndexedDbPhotos(formatted);
+            try {
+              localStorage.setItem('gallery_photos', JSON.stringify(formatted.slice(0, 10)));
+            } catch(e) {}
+          } else {
+            loadFromLocalCache().then(() => fetchGallery());
+          }
+        };
+      } catch(e) {}
+    }
 
     const savedLikes = localStorage.getItem('clinic_gallery_likes');
     if (savedLikes) {
@@ -264,6 +323,7 @@ export default function Gallery() {
     const hero = heroRef.current;
     if (!hero) return () => {
       clearInterval(pollInterval);
+      if (bc) try { bc.close(); } catch(e) {}
       window.removeEventListener('storage', handleGalleryUpdate);
       window.removeEventListener('gallery_updated', handleGalleryUpdate);
       window.removeEventListener('focus', handleGalleryUpdate);
@@ -278,6 +338,7 @@ export default function Gallery() {
     window.addEventListener('scroll', handleScroll);
     return () => {
       clearInterval(pollInterval);
+      if (bc) try { bc.close(); } catch(e) {}
       window.removeEventListener('storage', handleGalleryUpdate);
       window.removeEventListener('gallery_updated', handleGalleryUpdate);
       window.removeEventListener('focus', handleGalleryUpdate);
